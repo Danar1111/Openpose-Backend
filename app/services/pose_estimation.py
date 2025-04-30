@@ -28,6 +28,9 @@ def process_pose_from_bytes(image_bytes):
 
     opWrapper.emplaceAndPop(datums)
 
+    print("Image shape:", image.shape)
+    print("Pose keypoints:", datum.poseKeypoints)
+    cv2.imwrite("test_debug.jpg", image)  # sementara simpan untuk lihat isi image
 
     # Misalnya outputnya adalah keypoints
     keypoints = datum.poseKeypoints.tolist() if datum.poseKeypoints is not None else []
