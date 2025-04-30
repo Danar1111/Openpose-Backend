@@ -1,6 +1,6 @@
-from openpose import pyopenpose as op
-
 def process_image_with_openpose(image):
+    from openpose import pyopenpose as op
+
     params = {
         "model_folder": "/root/openpose/models",
         "model_pose": "BODY_25",
@@ -20,5 +20,10 @@ def process_image_with_openpose(image):
     opWrapper.emplaceAndPop(op.VectorDatum([datum]))
 
     keypoints = datum.poseKeypoints[0] if datum.poseKeypoints is not None else []
-    hand_keypoints = datum.handKeypoints[1][0] if datum.handKeypoints and len(datum.handKeypoints[1]) > 0 else []
+
+    hand_keypoints = []
+    if datum.handKeypoints and isinstance(datum.handKeypoints[1], list) and len(datum.handKeypoints[1]) > 0:
+        if datum.handKeypoints[1][0] is not None:
+            hand_keypoints = datum.handKeypoints[1][0]
+
     return keypoints, hand_keypoints
