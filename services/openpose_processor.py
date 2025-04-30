@@ -1,7 +1,7 @@
-def process_image_with_openpose(image):
-    from openpose import pyopenpose as op
-    import cv2
+from openpose import pyopenpose as op
+import cv2
 
+def process_image_with_openpose(image):
     params = {
         "model_folder": "/root/openpose/models",
         "model_pose": "BODY_25",
@@ -19,7 +19,9 @@ def process_image_with_openpose(image):
     datum = op.Datum()
     datum.cvInputData = image
 
-    opWrapper.emplaceAndPop([datum])
+    data = op.VectorDatum()
+    data.append(datum)
+    opWrapper.emplaceAndPop(data)
 
     keypoints = datum.poseKeypoints[0] if datum.poseKeypoints is not None else []
 
