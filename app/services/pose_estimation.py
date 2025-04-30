@@ -46,9 +46,7 @@ def process_pose_from_bytes(image_bytes):
         "model_pose": "BODY_25",
         "hand": True,
         "number_people_max": 1,
-        "disable_multi_thread": False,
         "model_folder": "/root/openpose/models",
-        "net_resolution": "656x368"
     }
     opWrapper = op.WrapperPython()
     opWrapper.configure(params)
@@ -74,7 +72,6 @@ def process_pose_from_bytes(image_bytes):
     # Return semua keypoints
     result = {
         "body": safe_keypoints_to_list(datum.poseKeypoints),
-        "hand_left": safe_keypoints_to_list(datum.handKeypoints[0]) if datum.handKeypoints is not None else [],
         "hand_right": safe_keypoints_to_list(datum.handKeypoints[1]) if datum.handKeypoints is not None else [],
     }
     return result
