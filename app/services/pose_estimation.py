@@ -20,11 +20,9 @@ def process_pose_from_bytes(image_bytes):
 
     datum = op.Datum()
     datum.cvInputData = image
-    datum_ptr = op.Datum()
-    datum_ptr.cvInputData = image
 
     datums = op.VectorDatum()
-    datums.append(datum_ptr)
+    datums.append(datum)
 
     opWrapper.emplaceAndPop(datums)
 
