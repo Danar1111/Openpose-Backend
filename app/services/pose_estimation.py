@@ -44,7 +44,7 @@ def process_pose_from_bytes(image_bytes):
     # Konfigurasi OpenPose
     params = {
         "model_pose": "BODY_25",
-        "hand": True,  # AKTIFKAN deteksi tangan
+        "hand": True,
         "number_people_max": 1,
         "disable_multi_thread": True,
         "model_folder": "/root/openpose/models",
