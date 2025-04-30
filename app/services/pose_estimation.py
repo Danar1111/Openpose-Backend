@@ -100,16 +100,18 @@ def process_pose_from_bytes(image_bytes):
     angles = {}
 
     if hip and knee and ankle:
-        angles["knee_angle"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else None
+        angles["sudut_lutut"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else None
     if shoulder and elbow and wrist:
-        angles["elbow_angle"] = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else None
+        elbow_angle = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else None
+        angles["sudut_siku"] = elbow_angle
+        angles["sudut_siku_rula"] = elbow_angle
     if back and neck and head:
-        angles["neck_angle"] = calculate_angle(back, neck, head) if back and neck and head else None
+        angles["sudut_leher"] = calculate_angle(back, neck, head) if back and neck and head else None
     if knee and hip and neck:
-        angles["thigh_back_angle"] = calculate_angle(knee, hip, neck) if knee and hip and neck else None
+        angles["sudut_paha_punggung"] = calculate_angle(knee, hip, neck) if knee and hip and neck else None
     if wrist and thumb and pinky:
-        angles["wrist_angle"] = calculate_angle(thumb, wrist, pinky) if thumb and wrist and pinky else None
+        angles["sudut_pergelangan"] = calculate_angle(thumb, wrist, pinky) if thumb and wrist and pinky else None
     if back and shoulder and elbow:
-        angles["shoulder_angle"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else None
+        angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else None
 
     return predict_from_angles(angles)
