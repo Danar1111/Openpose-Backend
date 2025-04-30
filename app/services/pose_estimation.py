@@ -113,4 +113,22 @@ def process_pose_from_bytes(image_bytes):
     if back and shoulder and elbow:
         angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else 0
 
+    # Pastikan semua key sudut tersedia (isi 0 jika belum ada)
+    required_keys = [
+        "sudut_lutut",
+        "sudut_siku",
+        "sudut_siku_rula",
+        "sudut_leher",
+        "sudut_paha_punggung",
+        "sudut_pergelangan",
+        "sudut_bahu"
+    ]
+
+    for key in required_keys:
+        if key not in angles:
+            print(f"[DEBUG] Sudut '{key}' tidak tersedia, diset 0")
+            angles[key] = 0
+
+    print("[DEBUG] Final dict sudut:", angles)
+
     return predict_from_angles(angles)
