@@ -6,7 +6,9 @@ def process_image_with_openpose(image):
         "model_pose": "BODY_25",
         "hand": True,
         "number_people_max": 1,
-        "disable_multi_thread": True
+        "disable_multi_thread": True,
+        "num_gpu": 0,
+        "num_gpu_start": 0
     }
 
     opWrapper = op.WrapperPython()
