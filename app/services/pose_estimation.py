@@ -35,13 +35,16 @@ def run_openpose(image, opWrapper):
     datums = op.VectorDatum()
     datums.append(datum)
     opWrapper.emplaceAndPop(datums)
-    return datum.poseKeypoints
+    return datum
+
+def safe_keypoints_to_list(kpts):
+    return kpts.tolist() if kpts is not None else []
 
 def process_pose_from_bytes(image_bytes):
     # Konfigurasi OpenPose
     params = {
         "model_pose": "BODY_25",
-        "hand": False,
+        "hand": True,  # AKTIFKAN deteksi tangan
         "number_people_max": 1,
         "disable_multi_thread": True,
         "model_folder": "/root/openpose/models",
@@ -54,7 +57,8 @@ def process_pose_from_bytes(image_bytes):
     image = bytes_to_cv2(image_bytes)
 
     # Proses awal
-    keypoints = run_openpose(image, opWrapper)
+    datum = run_openpose(image, opWrapper)
+    keypoints = datum.poseKeypoints
 
     if keypoints is not None:
         direction_score = detect_facing_direction(keypoints)
@@ -64,9 +68,13 @@ def process_pose_from_bytes(image_bytes):
             # Flip jika menghadap kiri
             print("Flip image ke kanan")
             flipped = cv2.flip(image, 1)
-            keypoints = run_openpose(flipped, opWrapper)
-            return {"keypoints": keypoints.tolist() if keypoints is not None else []}
-        else:
-            return {"keypoints": keypoints.tolist()}
-    else:
-        return {"keypoints": []}
+            datum = run_openpose(flipped, opWrapper)
+            keypoints = datum.poseKeypoints
+
+    # Return semua keypoints
+    result = {
+        "body": safe_keypoints_to_list(datum.poseKeypoints),
+        "hand_left": safe_keypoints_to_list(datum.handKeypoints[0]) if datum.handKeypoints is not None else [],
+        "hand_right": safe_keypoints_to_list(datum.handKeypoints[1]) if datum.handKeypoints is not None else [],
+    }
+    return result
