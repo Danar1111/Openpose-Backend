@@ -102,9 +102,8 @@ def process_pose_from_bytes(image_bytes):
     if hip and knee and ankle:
         angles["sudut_lutut"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else None
     if shoulder and elbow and wrist:
-        elbow_angle = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else None
-        angles["sudut_siku"] = elbow_angle
-        angles["sudut_siku_rula"] = elbow_angle
+        angles["sudut_siku"] = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else None
+        angles["sudut_siku_rula"] = angles["sudut_siku"]
     if back and neck and head:
         angles["sudut_leher"] = calculate_angle(back, neck, head) if back and neck and head else None
     if knee and hip and neck:
