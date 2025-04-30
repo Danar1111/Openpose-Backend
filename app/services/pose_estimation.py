@@ -3,9 +3,34 @@ import numpy as np
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 
-def get_coords(kpts, index):
+def calculate_angle(a, b, c):
+    a = np.array(a)
+    b = np.array(b)
+    c = np.array(c)
+    v1 = a - b
+    v2 = c - b
+    cosine_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+    angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
+    return np.degrees(angle)
+
+def run_openpose(image, opWrapper):
+    datum = op.Datum()
+    datum.cvInputData = image
+    datums = op.VectorDatum()
+    datums.append(datum)
+    opWrapper.emplaceAndPop(datums)
+    return datum
+
+def get_coords(keypoints, index):
     try:
-        x, y, c = kpts[0][index]
+        x, y, c = keypoints[0][index]
+        return (int(x), int(y)) if c > 0.1 else None
+    except:
+        return None
+
+def get_hand_coords(hand_keypoints, index):
+    try:
+        x, y, c = hand_keypoints[0][index]
         return (int(x), int(y)) if c > 0.1 else None
     except:
         return None
@@ -29,49 +54,61 @@ def detect_facing_direction(keypoints):
 
     return score
 
-def run_openpose(image, opWrapper):
-    datum = op.Datum()
-    datum.cvInputData = image
-    datums = op.VectorDatum()
-    datums.append(datum)
-    opWrapper.emplaceAndPop(datums)
-    return datum
-
-def safe_keypoints_to_list(kpts):
-    return kpts.tolist() if kpts is not None else []
-
 def process_pose_from_bytes(image_bytes):
-    # Konfigurasi OpenPose
     params = {
         "model_pose": "BODY_25",
         "hand": True,
         "number_people_max": 1,
-        "model_folder": "/root/openpose/models",
+        "model_folder": "/root/openpose/models"
     }
+
     opWrapper = op.WrapperPython()
     opWrapper.configure(params)
     opWrapper.start()
 
     image = bytes_to_cv2(image_bytes)
-
-    # Proses awal
     datum = run_openpose(image, opWrapper)
     keypoints = datum.poseKeypoints
 
     if keypoints is not None:
         direction_score = detect_facing_direction(keypoints)
-        print("Arah hadap:", "kiri" if direction_score > 0 else "kanan" if direction_score < 0 else "netral")
-
         if direction_score > 0:
-            # Flip jika menghadap kiri
             print("Flip image ke kanan")
             flipped = cv2.flip(image, 1)
             datum = run_openpose(flipped, opWrapper)
             keypoints = datum.poseKeypoints
 
-    # Return semua keypoints
-    result = {
-        "body": safe_keypoints_to_list(datum.poseKeypoints),
-        "hand_right": safe_keypoints_to_list(datum.handKeypoints[1]) if datum.handKeypoints is not None else [],
-    }
-    return result
+    hand_kpts = datum.handKeypoints[1] if datum.handKeypoints is not None else None  # right hand
+
+    # Ambil koordinat
+    hip = get_coords(keypoints, 9)
+    knee = get_coords(keypoints, 10)
+    ankle = get_coords(keypoints, 11)
+    shoulder = get_coords(keypoints, 2)
+    elbow = get_coords(keypoints, 3)
+    wrist = get_coords(keypoints, 4)
+    neck = get_coords(keypoints, 1)
+    head = get_coords(keypoints, 17)
+    back = get_coords(keypoints, 8)
+
+    thumb = get_hand_coords(hand_kpts, 4)
+    index_finger = get_hand_coords(hand_kpts, 8)
+    pinky = get_hand_coords(hand_kpts, 20)
+
+    # Hitung sudut
+    angles = {}
+
+    if hip and knee and ankle:
+        angles["knee_angle"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else None
+    if shoulder and elbow and wrist:
+        angles["elbow_angle"] = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else None
+    if back and neck and head:
+        angles["neck_angle"] = calculate_angle(back, neck, head) if back and neck and head else None
+    if knee and hip and neck:
+        angles["thigh_back_angle"] = calculate_angle(knee, hip, neck) if knee and hip and neck else None
+    if wrist and thumb and pinky:
+        angles["wrist_angle"] = calculate_angle(thumb, wrist, pinky) if thumb and wrist and pinky else None
+    if back and shoulder and elbow:
+        angles["shoulder_angle"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else None
+
+    return angles
