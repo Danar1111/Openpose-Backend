@@ -1,19 +1,18 @@
-import os
 from openpose import pyopenpose as op
 
-params = {
-    "model_pose": "BODY_25",
-    "hand": True,
-    "number_people_max": 1,
-    "disable_multi_thread": True,
-    "model_folder": "/root/openpose/models"
-}
-
-opWrapper = op.WrapperPython()
-opWrapper.configure(params)
-opWrapper.start()
-
 def process_image_with_openpose(image):
+    params = {
+        "model_folder": "/root/openpose/models",
+        "model_pose": "BODY_25",
+        "hand": True,
+        "number_people_max": 1,
+        "disable_multi_thread": True
+    }
+
+    opWrapper = op.WrapperPython()
+    opWrapper.configure(params)
+    opWrapper.start()
+
     datum = op.Datum()
     datum.cvInputData = image
     opWrapper.emplaceAndPop(op.VectorDatum([datum]))
