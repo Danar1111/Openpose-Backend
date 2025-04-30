@@ -6,9 +6,11 @@ from app.utils.image_converter import bytes_to_cv2
 def process_pose_from_bytes(image_bytes):
     # Konfigurasi OpenPose
     params = {
-        "model_folder": "/root/openpose/models/",
-        "net_resolution": "-1x368",
+        "model_pose": "BODY_25",
+        "hand": False,  # sementara nonaktif, bisa diaktifkan nanti
+        "number_people_max": 1,
         "disable_multi_thread": True,
+        "model_folder": "/root/openpose/models"  # pastikan path ini sesuai lokasi model Anda
     }
     opWrapper = op.WrapperPython()
     opWrapper.configure(params)
