@@ -4,7 +4,7 @@ import json
 import os
 
 # Load model saat modul diimpor
-MODEL_PATH = os.path.abspath("../models/wrapped_ergo_model.pkl")
+MODEL_PATH = os.path.abspath("./app/models/wrapped_ergo_model.pkl")
 
 with open(MODEL_PATH, "rb") as f:
     model = cloudpickle.load(f)
