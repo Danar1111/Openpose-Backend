@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
+from app.services.model_predictor import predict_from_angles
 
 def calculate_angle(a, b, c):
     a = np.array(a)
@@ -111,4 +112,4 @@ def process_pose_from_bytes(image_bytes):
     if back and shoulder and elbow:
         angles["shoulder_angle"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else None
 
-    return angles
+    return predict_from_angles(angles)
