@@ -83,7 +83,6 @@ def process_pose_from_bytes(image_bytes):
             flipped = cv2.flip(image, 1)
             datum = run_openpose(flipped, opWrapper)
             keypoints = datum.poseKeypoints
-            processed_keypoints = keypoints
             is_flipped = True
 
     hand_kpts = datum.handKeypoints[1] if datum.handKeypoints is not None else None  # right hand
