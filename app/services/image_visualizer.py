@@ -11,7 +11,7 @@ def get_color_by_score(score):
     else:
         return (0, 0, 255)  # Merah
 
-def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi):
+def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipped):
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -24,13 +24,26 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi):
         "sudut_bahu": hasil_prediksi.get("skor_bahu_rula", 0),
     }
 
-    point_mapping = {
-        "sudut_lutut": 10,
-        "sudut_siku": 3,
-        "sudut_leher": 1,
-        "sudut_paha_punggung": 9,
-        "sudut_pergelangan": 4,
-        "sudut_bahu": 2,
+    point_mapping = {}
+
+    if (is_flipped){
+        point_mapping = {
+            "sudut_lutut": 13,
+            "sudut_siku": 6,
+            "sudut_leher": 0,
+            "sudut_paha_punggung": 12,
+            "sudut_pergelangan": 7,
+            "sudut_bahu": 5,
+        }
+    } else {
+        point_mapping = {
+            "sudut_lutut": 10,
+            "sudut_siku": 3,
+            "sudut_leher": 0,
+            "sudut_paha_punggung": 9,
+            "sudut_pergelangan": 4,
+            "sudut_bahu": 2,
+        }
     }
 
     for key, index in point_mapping.items():
@@ -39,8 +52,18 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi):
             if conf > 0.1:
                 color = get_color_by_score(mapping[key])
                 overlay = img.copy()
+
+                glow = np.zeros_like(img)
+
+                cv2.circle(glow, (int(x), int(y)), 40, color, -1)
+
+                glow = cv2.GaussianBlur(glow, (41, 41), 0)
+
+                overlay = cv2.addWeighted(overlay, 1.0, glow, 0.5, 0)
+
                 cv2.circle(overlay, (int(x), int(y)), 20, color, -1)
-                img = cv2.addWeighted(overlay, 0.4, img, 0.6, 0)
+
+                img = cv2.addWeighted(overlay, 0.6, img, 0.4, 0)
         except:
             continue
 

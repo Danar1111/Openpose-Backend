@@ -74,7 +74,7 @@ def process_pose_from_bytes(image_bytes):
 
     processed_image = image_bytes
     processed_keypoinst = keypoints
-
+    is_flipped = False
 
     if keypoints is not None:
         direction_score = detect_facing_direction(keypoints)
@@ -83,6 +83,7 @@ def process_pose_from_bytes(image_bytes):
             flipped = cv2.flip(image, 1)
             datum = run_openpose(flipped, opWrapper)
             keypoints = datum.poseKeypoints
+            is_flipped = True
 
     hand_kpts = datum.handKeypoints[1] if datum.handKeypoints is not None else None  # right hand
 
@@ -140,7 +141,7 @@ def process_pose_from_bytes(image_bytes):
     hasil_prediksi = predict_from_angles(angles)
 
     # Generate visualisasi dan ambil path gambar
-    gambar_path = generate_pose_visualization(processed_image, processed_keypoinst, hasil_prediksi)
+    gambar_path = generate_pose_visualization(processed_image, processed_keypoinst, hasil_prediksi, is_flipped)
 
     # Tambahkan ke hasil prediksi
     hasil_prediksi["gambar_path"] = gambar_path
