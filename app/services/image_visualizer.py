@@ -24,26 +24,13 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         "sudut_bahu": hasil_prediksi.get("skor_bahu_rula", 0),
     }
 
-    point_mapping = {}
-
-    if (is_flipped){
-        point_mapping = {
-            "sudut_lutut": 13,
-            "sudut_siku": 6,
-            "sudut_leher": 0,
-            "sudut_paha_punggung": 12,
-            "sudut_pergelangan": 7,
-            "sudut_bahu": 5,
-        }
-    } else {
-        point_mapping = {
-            "sudut_lutut": 10,
-            "sudut_siku": 3,
-            "sudut_leher": 0,
-            "sudut_paha_punggung": 9,
-            "sudut_pergelangan": 4,
-            "sudut_bahu": 2,
-        }
+    point_mapping = {
+        "sudut_lutut": 13 if is_flipped else 10,
+        "sudut_siku": 6 if is_flipped else 3,
+        "sudut_leher": 0,
+        "sudut_paha_punggung": 12 if is_flipped else 9,
+        "sudut_pergelangan": 7 if is_flipped else 4,
+        "sudut_bahu": 5 if is_flipped else 2,
     }
 
     for key, index in point_mapping.items():
