@@ -40,17 +40,17 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 color = get_color_by_score(mapping[key])
                 overlay = img.copy()
 
+                # Buat layer glow kosong
                 glow = np.zeros_like(img)
 
-                cv2.circle(glow, (int(x), int(y)), 40, color, -1)
+                # Buat lingkaran besar sebagai dasar glow (radius bisa disesuaikan)
+                cv2.circle(glow, (int(x), int(y)), 80, color, -1)
 
-                glow = cv2.GaussianBlur(glow, (41, 41), 0)
+                # Blur supaya menyebar dan soft
+                glow = cv2.GaussianBlur(glow, (101, 101), 0)
 
-                overlay = cv2.addWeighted(overlay, 1.0, glow, 0.5, 0)
-
-                cv2.circle(overlay, (int(x), int(y)), 20, color, -1)
-
-                img = cv2.addWeighted(overlay, 0.6, img, 0.4, 0)
+                # Blend glow dengan gambar
+                img = cv2.addWeighted(img, 1.0, glow, 0.6, 0)
         except:
             continue
 
