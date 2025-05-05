@@ -21,6 +21,17 @@ def convert_to_python_type(obj):
 
 def predict_from_angles(angle_dict):
     # Susun DataFrame dari sudut
+    required_columns = [
+        "sudut_lutut",
+        "sudut_siku",
+        "sudut_siku_rula",
+        "sudut_leher",
+        "sudut_paha_punggung",
+        "sudut_pergelangan",
+        "sudut_bahu"
+    ]
+    
+    data_input = {col: angle_dict.get(col, 0) for col in required_columns}
     df = pd.DataFrame([angle_dict])
     
     # Prediksi
@@ -28,4 +39,7 @@ def predict_from_angles(angle_dict):
     
     # Konversi output ke native Python
     hasil_python = convert_to_python_type(hasil_prediksi)
+
+    # Gabungkan hasil sudut ke hasil prediksi
+    hasil_python["sudut"] = angle_dict
     return hasil_python
