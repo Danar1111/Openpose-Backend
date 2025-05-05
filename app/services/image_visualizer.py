@@ -27,7 +27,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     point_mapping = {
         "sudut_lutut": 13 if is_flipped else 10,
         "sudut_siku": 6 if is_flipped else 3,
-        "sudut_leher": 0,
+        "sudut_leher": 18 if is_flipped else 17,
         "sudut_paha_punggung": 12 if is_flipped else 9,
         "sudut_pergelangan": 7 if is_flipped else 4,
         "sudut_bahu": 5 if is_flipped else 2,
@@ -54,7 +54,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
 
-    filename = datetime.now().strftime("%H%M%S") + "_hasil.png"
+    filename = datetime.now().strftime("%H%M%S_%f") + "_hasil.png"
     filepath = os.path.join(folder_path, filename)
     cv2.imwrite(filepath, img)
 
