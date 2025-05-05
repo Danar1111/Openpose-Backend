@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from app.services.pose_estimation import process_pose_from_bytes
+import os
 
 pose_bp = Blueprint('pose', __name__)
 
@@ -16,3 +17,8 @@ def predict_image():
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@pose_bp.route('/output_images/<path:filename>')
+def serve_output_image(filename):
+    directory = os.path.join(os.getcwd(), 'output_images')
+    return send_from_directory(directory, filename, mimetype='image/png')
