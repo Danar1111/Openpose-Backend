@@ -3,6 +3,7 @@ import numpy as np
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 from app.services.model_predictor import predict_from_angles
+from app.services.image_visualizer import generate_pose_visualization
 
 def calculate_angle(a, b, c):
     a = np.array(a)
@@ -131,4 +132,13 @@ def process_pose_from_bytes(image_bytes):
 
     print("[DEBUG] Final dict sudut:", angles)
 
-    return predict_from_angles(angles)
+    # Prediksi model
+    hasil_prediksi = predict_from_angles(angles)
+
+    # Generate visualisasi dan ambil path gambar
+    gambar_path = generate_pose_visualization(image_bytes, datum.poseKeypoints, hasil_prediksi)
+
+    # Tambahkan ke hasil prediksi
+    hasil_prediksi["gambar_path"] = gambar_path
+
+    return hasil_prediksi
