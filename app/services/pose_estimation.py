@@ -136,7 +136,7 @@ def process_pose_from_bytes(image_bytes):
     hasil_prediksi = predict_from_angles(angles)
 
     # Generate visualisasi dan ambil path gambar
-    gambar_path = generate_pose_visualization(image_bytes, datum.poseKeypoints, hasil_prediksi)
+    gambar_path = generate_pose_visualization(image, datum.poseKeypoints, hasil_prediksi)
 
     # Tambahkan ke hasil prediksi
     hasil_prediksi["gambar_path"] = gambar_path
