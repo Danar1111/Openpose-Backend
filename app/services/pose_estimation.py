@@ -72,6 +72,10 @@ def process_pose_from_bytes(image_bytes):
     datum = run_openpose(image, opWrapper)
     keypoints = datum.poseKeypoints
 
+    processed_image = image_bytes
+    processed_keypoinst = keypoints
+
+
     if keypoints is not None:
         direction_score = detect_facing_direction(keypoints)
         if direction_score > 0:
@@ -136,8 +140,7 @@ def process_pose_from_bytes(image_bytes):
     hasil_prediksi = predict_from_angles(angles)
 
     # Generate visualisasi dan ambil path gambar
-    processed_image = datum.cvOutputData.copy()
-    gambar_path = generate_pose_visualization(processed_image, datum.poseKeypoints, hasil_prediksi)
+    gambar_path = generate_pose_visualization(processed_image, processed_keypoinst, hasil_prediksi)
 
     # Tambahkan ke hasil prediksi
     hasil_prediksi["gambar_path"] = gambar_path
