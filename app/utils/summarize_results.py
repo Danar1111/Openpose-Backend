@@ -1,6 +1,6 @@
 from collections import defaultdict, Counter
 
-def summarize_results_majority_numeric(results):
+def summarize_results(results):
     count = len(results)
     
     skor_counter = defaultdict(Counter)
