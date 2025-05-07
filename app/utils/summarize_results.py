@@ -33,20 +33,19 @@ def summarize_results(results):
 
     # Feedback paling sering
     most_common_feedback = feedback_counter.most_common(1)
-    feedback_summary = "; ".join([f"{text} ({freq}x)" for text, freq in most_common_feedback])
+    feedback_summary = "; ".join([f"{text}" for text, freq in most_common_feedback])
 
     # Susun feedback akhir
     summary_feedback = (
-        f"Hasil analisa {count} frame.\n\n"
-        f"Mayoritas skor per bagian:\n" + "\n".join([f"- {key}: {val}" for key, val in majority_scores.items()]) + "\n\n"
-        f"Rata-rata Sudut:\n" + "\n".join([f"- {key}: {val:.2f}" for key, val in average_sudut.items()]) + "\n\n"
-        f"Feedback paling sering:\n{feedback_summary}"
+        f"Hasil analisa {count} frame."
+        f" Mayoritas skor per bagian:\n" + "\n".join([f"- {key}: {val}" for key, val in majority_scores.items()]) + "\n\n"
+        f" Rata-rata Sudut:\n" + "\n".join([f"- {key}: {val:.2f}" for key, val in average_sudut.items()]) + "\n\n"
+        f"\n{feedback_summary}"
     )
 
     return {
         "feedback": summary_feedback,
         "majority_scores": majority_scores,
         "average_sudut": average_sudut,
-        "feedback_counter": dict(feedback_counter),
         "total_frames": count
     }
