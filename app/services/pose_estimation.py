@@ -202,19 +202,31 @@ def process_openpose_results(json_folder, image_folder):
     return results
 
 def calculate_angles_from_keypoints(keypoints, hand_kpts):
-    hip = get_coords(keypoints, 9)
-    knee = get_coords(keypoints, 10)
-    ankle = get_coords(keypoints, 11)
-    shoulder = get_coords(keypoints, 2)
-    elbow = get_coords(keypoints, 3)
-    wrist = get_coords(keypoints, 4)
-    neck = get_coords(keypoints, 1)
-    head = get_coords(keypoints, 17)
-    back = get_coords(keypoints, 8)
+    def get_coords_video(keypoints, index):
+        if keypoints is None or len(keypoints) <= index:
+            return None
+        x, y, c = keypoints[index]
+        return (int(x), int(y)) if c > 0.1 else None
 
-    thumb = get_hand_coords(hand_kpts, 4)
-    index_finger = get_hand_coords(hand_kpts, 8)
-    pinky = get_hand_coords(hand_kpts, 20)
+    def get_hand_coords_video(hand_keypoints, index):
+        if hand_keypoints is None or len(hand_keypoints) <= index:
+            return None
+        x, y, c = hand_keypoints[index]
+        return (int(x), int(y)) if c > 0.1 else None
+
+    hip = get_coords_video(keypoints, 9)
+    knee = get_coords_video(keypoints, 10)
+    ankle = get_coords_video(keypoints, 11)
+    shoulder = get_coords_video(keypoints, 2)
+    elbow = get_coords_video(keypoints, 3)
+    wrist = get_coords_video(keypoints, 4)
+    neck = get_coords_video(keypoints, 1)
+    head = get_coords_video(keypoints, 17)
+    back = get_coords_video(keypoints, 8)
+
+    thumb = get_hand_coords_video(hand_kpts, 4)
+    index_finger = get_hand_coords_video(hand_kpts, 8)
+    pinky = get_hand_coords_video(hand_kpts, 20)
 
     angles = {}
 
