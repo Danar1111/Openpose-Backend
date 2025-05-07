@@ -42,9 +42,15 @@ def predict_video():
 
     return jsonify({"job_id": job_id})
 
-@pose_bp.route("/predict/video/result/<job_id>", methods=["GET"])
-def get_video_result(job_id):
+@pose_bp.route("/predict/video/result", methods=["GET"])
+def get_video_result():
+    job_id = request.args.get("job_id")
+
+    if not job_id:
+        return jsonify({"error": "Job ID is required"}), 400
+
     job = get_job(job_id)
     if not job:
         return jsonify({"error": "Job not found"}), 404
+    
     return jsonify(job)
