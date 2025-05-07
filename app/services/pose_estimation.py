@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import json
 import os
+import subprocess
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 from app.services.model_predictor import predict_from_angles
@@ -151,20 +152,20 @@ def process_pose_from_bytes(image_bytes):
     return hasil_prediksi
 
 def run_openpose_on_folder(image_folder, output_json_folder):
-    params = {
-        "model_pose": "BODY_25",
-        "hand": True,
-        "number_people_max": 1,
-        "model_folder": "/root/openpose/models",
-        "image_dir": image_folder,
-        "write_json": output_json_folder,
-        "display": 0
-    }
+    openpose_bin_path = "/root/openpose/build/examples/openpose/openpose.bin"
+    model_folder = "/root/openpose/models"
 
-    opWrapper = op.WrapperPython()
-    opWrapper.configure(params)
-    opWrapper.start()
-    opWrapper.stop()
+    command = [
+        openpose_bin_path,
+        "--image_dir", image_folder,
+        "--write_json", output_json_folder,
+        "--model_folder", model_folder,
+        "--hand",
+        "--display", "0",
+        "--disable_multi_thread"
+    ]
+
+    subprocess.run(command, check=True)
 
 def process_openpose_results(json_folder, image_folder):
     results = []
