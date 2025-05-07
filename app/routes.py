@@ -33,17 +33,20 @@ def predict_video():
     file = request.files['video']
 
     job_id = create_job()
-
     job_folder = os.path.join("temp_jobs", job_id)
     os.makedirs(job_folder, exist_ok=True)
 
-    video_path = os.path.join(job_folder, "video.mp4")
-    file.save(video_path) 
+    response = jsonify({"job_id": job_id})
+
+    def background_task():
+        video_path = os.path.join(job_folder, "video.mp4")
+        file.save(video_path)
+        process_video(job_folder, job_id)
 
     import threading
-    threading.Thread(target=process_video, args=(job_folder, job_id)).start()
+    threading.Thread(target=background_task).start()
 
-    return jsonify({"job_id": job_id})
+    return response
 
 @pose_bp.route("/predict/video/result", methods=["GET"])
 def get_video_result():
