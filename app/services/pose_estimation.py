@@ -193,12 +193,6 @@ def process_openpose_results(json_folder, image_folder):
     return results
 
 def calculate_angles_from_keypoints(keypoints):
-    def get_coords(kpts, index):
-        if kpts is None or kpts.shape[0] <= index:
-            return None
-        x, y, conf = kpts[index]
-        return (x, y) if conf > 0.1 else None
-
     hip = get_coords(keypoints, 9)
     knee = get_coords(keypoints, 10)
     ankle = get_coords(keypoints, 11)
@@ -209,21 +203,25 @@ def calculate_angles_from_keypoints(keypoints):
     head = get_coords(keypoints, 17)
     back = get_coords(keypoints, 8)
 
+    thumb = get_hand_coords(hand_kpts, 4)
+    index_finger = get_hand_coords(hand_kpts, 8)
+    pinky = get_hand_coords(hand_kpts, 20)
+
     angles = {}
 
     if hip and knee and ankle:
-        angles["sudut_lutut"] = calculate_angle(hip, knee, ankle)
+        angles["sudut_lutut"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else 0
     if shoulder and elbow and wrist:
-        angles["sudut_siku"] = calculate_angle(shoulder, elbow, wrist)
+        angles["sudut_siku"] = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else 0
         angles["sudut_siku_rula"] = angles["sudut_siku"]
     if back and neck and head:
-        angles["sudut_leher"] = calculate_angle(back, neck, head)
+        angles["sudut_leher"] = calculate_angle(back, neck, head) if back and neck and head else 0
     if knee and hip and neck:
-        angles["sudut_paha_punggung"] = calculate_angle(knee, hip, neck)
-    if wrist:
-        angles["sudut_pergelangan"] = 0  # Optional kalau tangan tidak digunakan
+        angles["sudut_paha_punggung"] = calculate_angle(knee, hip, neck) if knee and hip and neck else 0
+    if wrist and thumb and pinky:
+        angles["sudut_pergelangan"] = calculate_angle(thumb, wrist, pinky) if thumb and wrist and pinky else 0
     if back and shoulder and elbow:
-        angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow)
+        angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else 0
 
     # Isi 0 jika tidak ada
     required_keys = [
