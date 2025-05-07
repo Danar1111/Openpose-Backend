@@ -187,7 +187,7 @@ def process_openpose_results(json_folder, image_folder):
                 if "hand_right_keypoints_2d" in person and person["hand_right_keypoints_2d"]:
                     hand_right_keypoints = np.array(person["hand_right_keypoints_2d"]).reshape(-1, 3)
 
-            print(hand_keypoints)
+            print(hand_right_keypoints)
             print(keypoints)
 
             if keypoints is not None:
