@@ -8,7 +8,7 @@ def categorize(score):
     else:
         return "Kurang Ergonomis"
 
-def summarize_results_majority(results):
+def summarize_results(results):
     count = len(results)
     
     kategori_counter = defaultdict(Counter)
