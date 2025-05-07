@@ -16,8 +16,8 @@ def process_video(video_bytes, job_id):
         print("[DEBUG] Video menghadap kiri, flip dulu.")
         video_path = flip_video(video_path)
 
-    folder_images = "temp_frames"
-    json_output = "temp_json"
+    folder_images = "/root/skripsi/Openpose-Backend/temp_frames"
+    json_output = "/root/skripsi/Openpose-Backend/temp_json"
 
     sample_video_to_folder(video_path, folder_images)
 
