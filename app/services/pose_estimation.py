@@ -177,10 +177,11 @@ def process_openpose_results(json_folder, image_folder):
                 data = json.load(f)
 
             keypoints = np.array(data['people'][0]['pose_keypoints_2d']).reshape(-1, 3) if data['people'] else None
+            hand_right_keypoints = np.array(people['hand_right_keypoints_2d']).reshape(-1, 3) if people and 'hand_right_keypoints_2d' in people else None
 
             if keypoints is not None:
                 # hitung sudut → gunakan fungsi process_pose_from_bytes logic
-                angles = calculate_angles_from_keypoints(keypoints)
+                angles = calculate_angles_from_keypoints(keypoints, hand_right_keypoints)
 
                 hasil_prediksi = predict_from_angles(angles)
 
@@ -192,7 +193,7 @@ def process_openpose_results(json_folder, image_folder):
 
     return results
 
-def calculate_angles_from_keypoints(keypoints):
+def calculate_angles_from_keypoints(keypoints, hand_kpts):
     hip = get_coords(keypoints, 9)
     knee = get_coords(keypoints, 10)
     ankle = get_coords(keypoints, 11)
