@@ -31,14 +31,19 @@ def predict_video():
         return jsonify({"error": "No video file provided"}), 400
 
     file = request.files['video']
-    video_bytes = file.read()
 
     # Buat job
     job_id = create_job()
 
+    job_folder = os.path.join("temp_jobs", job_id)
+    os.makedirs(job_folder, exist_ok=True)
+
+    video_path = os.path.join(job_folder, "video.mp4")
+    file.save(video_path) 
+
     # Jalankan processing di background thread (biar nggak nungguin lama)
     import threading
-    threading.Thread(target=process_video, args=(video_bytes, job_id)).start()
+    threading.Thread(target=process_video, args=(job_folder, job_id)).start()
 
     return jsonify({"job_id": job_id})
 
