@@ -181,7 +181,7 @@ def process_openpose_results(json_folder, image_folder):
 
             if keypoints is not None:
                 # hitung sudut → gunakan fungsi process_pose_from_bytes logic
-                angles = calculate_angles_from_keypoints(keypoints, hand_right_keypoints)
+                angles = calculate_angles_from_keypoints(keypoints)
 
                 hasil_prediksi = predict_from_angles(angles)
 
@@ -193,7 +193,7 @@ def process_openpose_results(json_folder, image_folder):
 
     return results
 
-def calculate_angles_from_keypoints(keypoints, hand_kpts):
+def calculate_angles_from_keypoints(keypoints):
     hip = get_coords(keypoints, 9)
     knee = get_coords(keypoints, 10)
     ankle = get_coords(keypoints, 11)
