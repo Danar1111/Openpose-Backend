@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import json
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 from app.services.model_predictor import predict_from_angles
@@ -147,3 +148,153 @@ def process_pose_from_bytes(image_bytes):
     hasil_prediksi["gambar_path"] = gambar_path
 
     return hasil_prediksi
+
+def run_openpose_on_folder(image_folder, output_json_folder):
+    params = {
+        "model_pose": "BODY_25",
+        "hand": True,
+        "number_people_max": 1,
+        "model_folder": "/root/openpose/models",
+        "image_dir": image_folder,
+        "write_json": output_json_folder,
+        "display": 0
+    }
+
+    opWrapper = op.WrapperPython()
+    opWrapper.configure(params)
+    opWrapper.start()
+    opWrapper.stop()
+
+def process_openpose_results(json_folder, image_folder):
+    results = []
+
+    for file in sorted(os.listdir(json_folder)):
+        if file.endswith(".json"):
+            with open(os.path.join(json_folder, file)) as f:
+                data = json.load(f)
+
+            keypoints = np.array(data['people'][0]['pose_keypoints_2d']).reshape(-1, 3) if data['people'] else None
+
+            if keypoints is not None:
+                # hitung sudut → gunakan fungsi process_pose_from_bytes logic
+                angles = calculate_angles_from_keypoints(keypoints)
+
+                hasil_prediksi = predict_from_angles(angles)
+
+                # Path gambar input
+                image_file = file.replace('.json', '.jpg')
+                hasil_prediksi['gambar_path'] = os.path.join(image_folder, image_file)
+
+                results.append(hasil_prediksi)
+
+    return results
+
+def calculate_angles_from_keypoints(keypoints):
+    def get_coords(kpts, index):
+        if kpts is None or kpts.shape[0] <= index:
+            return None
+        x, y, conf = kpts[index]
+        return (x, y) if conf > 0.1 else None
+
+    hip = get_coords(keypoints, 9)
+    knee = get_coords(keypoints, 10)
+    ankle = get_coords(keypoints, 11)
+    shoulder = get_coords(keypoints, 2)
+    elbow = get_coords(keypoints, 3)
+    wrist = get_coords(keypoints, 4)
+    neck = get_coords(keypoints, 1)
+    head = get_coords(keypoints, 17)
+    back = get_coords(keypoints, 8)
+
+    angles = {}
+
+    if hip and knee and ankle:
+        angles["sudut_lutut"] = calculate_angle(hip, knee, ankle)
+    if shoulder and elbow and wrist:
+        angles["sudut_siku"] = calculate_angle(shoulder, elbow, wrist)
+        angles["sudut_siku_rula"] = angles["sudut_siku"]
+    if back and neck and head:
+        angles["sudut_leher"] = calculate_angle(back, neck, head)
+    if knee and hip and neck:
+        angles["sudut_paha_punggung"] = calculate_angle(knee, hip, neck)
+    if wrist:
+        angles["sudut_pergelangan"] = 0  # Optional kalau tangan tidak digunakan
+    if back and shoulder and elbow:
+        angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow)
+
+    # Isi 0 jika tidak ada
+    required_keys = [
+        "sudut_lutut",
+        "sudut_siku",
+        "sudut_siku_rula",
+        "sudut_leher",
+        "sudut_paha_punggung",
+        "sudut_pergelangan",
+        "sudut_bahu"
+    ]
+
+    for key in required_keys:
+        if key not in angles:
+            angles[key] = 0
+
+    return angles
+
+def check_video_direction(video_path, check_frame=10):
+    cap = cv2.VideoCapture(video_path)
+    frame_idx = 0
+    direction_score = 0
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        if frame_idx == check_frame:
+            # Deteksi arah
+            params = {
+                "model_pose": "BODY_25",
+                "hand": True,
+                "number_people_max": 1,
+                "model_folder": "/root/openpose/models"
+            }
+            opWrapper = op.WrapperPython()
+            opWrapper.configure(params)
+            opWrapper.start()
+
+            datum = run_openpose(frame, opWrapper)
+            keypoints = datum.poseKeypoints
+            if keypoints is not None:
+                direction_score = detect_facing_direction(keypoints)
+
+            opWrapper.stop()
+            break
+
+        frame_idx += 1
+
+    cap.release()
+    return direction_score
+
+def flip_video(video_path):
+    cap = cv2.VideoCapture(video_path)
+
+    flipped_path = video_path.replace(".mp4", "_flipped.mp4")
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = None
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        flipped = cv2.flip(frame, 1)
+
+        if out is None:
+            height, width = flipped.shape[:2]
+            out = cv2.VideoWriter(flipped_path, fourcc, cap.get(cv2.CAP_PROP_FPS), (width, height))
+
+        out.write(flipped)
+
+    cap.release()
+    out.release()
+
+    return flipped_path

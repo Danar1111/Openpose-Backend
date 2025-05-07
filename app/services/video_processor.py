@@ -10,37 +10,23 @@ def process_video(video_bytes, job_id):
     # Simpan sementara videonya
     video_path = save_temp_video(video_bytes)
 
-    # Buka video dengan OpenCV
-    cap = cv2.VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    direction_score = check_video_direction(video_path)
 
-    sampled_results = []
-    frame_interval = 30  # Ambil setiap 30 frame (sekitar 1 detik kalau 30fps)
+    if direction_score > 0:
+        print("[DEBUG] Video menghadap kiri, flip dulu.")
+        video_path = flip_video(video_path)
 
-    frame_count = 0
+    folder_images = "temp_frames"
+    json_output = "temp_json"
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
+    sample_video_to_folder(video_path, folder_images)
 
-        # Ambil hanya frame sesuai interval
-        if frame_count % frame_interval == 0:
-            # Encode frame ke bytes
-            _, buffer = cv2.imencode('.jpg', frame)
-            frame_bytes = buffer.tobytes()
+    run_openpose_on_folder(folder_images, json_output)
 
-            # Proses frame seperti proses foto
-            result = process_pose_from_bytes(frame_bytes)
+    sampled_results = process_openpose_results(json_output, folder_images)
 
-            sampled_results.append(result)
-
-        frame_count += 1
-
-    cap.release()
     os.remove(video_path)
 
-    # Hitung hasil akhir dari semua frame
     final_result = summarize_results(sampled_results)
 
     # Simpan hasil ke job
@@ -57,3 +43,26 @@ def save_temp_video(video_bytes):
         f.write(video_bytes)
 
     return path
+
+def sample_video_to_folder(video_path, output_folder, frame_interval=30):
+    os.makedirs(output_folder, exist_ok=True)
+    
+    cap = cv2.VideoCapture(video_path)
+    frame_count = 0
+    saved_files = []
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        if frame_count % frame_interval == 0:
+            filename = f"{frame_count:06d}.jpg"
+            filepath = os.path.join(output_folder, filename)
+            cv2.imwrite(filepath, frame)
+            saved_files.append(filepath)
+
+        frame_count += 1
+
+    cap.release()
+    return saved_files
