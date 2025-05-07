@@ -177,7 +177,7 @@ def process_openpose_results(json_folder, image_folder):
                 data = json.load(f)
 
             keypoints = np.array(data['people'][0]['pose_keypoints_2d']).reshape(-1, 3) if data['people'] else None
-            hand_right_keypoints = np.array(people['hand_right_keypoints_2d']).reshape(-1, 3) if people and 'hand_right_keypoints_2d' in people else None
+            hand_right_keypoints = np.array(data['people'][0]['hand_right_keypoints_2d']).reshape(-1, 3) if data['people'] else None
 
             if keypoints is not None:
                 # hitung sudut → gunakan fungsi process_pose_from_bytes logic
