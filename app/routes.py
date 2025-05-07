@@ -32,7 +32,6 @@ def predict_video():
 
     file = request.files['video']
 
-    # Buat job
     job_id = create_job()
 
     job_folder = os.path.join("temp_jobs", job_id)
@@ -41,7 +40,6 @@ def predict_video():
     video_path = os.path.join(job_folder, "video.mp4")
     file.save(video_path) 
 
-    # Jalankan processing di background thread (biar nggak nungguin lama)
     import threading
     threading.Thread(target=process_video, args=(job_folder, job_id)).start()
 
