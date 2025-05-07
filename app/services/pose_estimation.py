@@ -259,7 +259,6 @@ def calculate_angles_from_keypoints(keypoints, hand_kpts):
         if key not in angles:
             angles[key] = 0
 
-    print(angles)
     return angles
 
 def check_video_direction(video_path, check_frame=10):
