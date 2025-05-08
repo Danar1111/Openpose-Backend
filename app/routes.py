@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from app.services.pose_estimation import process_pose_from_bytes
 from app.services.video_processor import process_video
 from app.services.job_manager import create_job, get_job
+from datetime import datetime, timedelta
+from app.ws_handlers import summary_storage
 import os
 
 pose_bp = Blueprint('pose', __name__)
@@ -57,3 +59,17 @@ def get_video_result():
         return jsonify({"error": "Job not found"}), 404
     
     return jsonify(job)
+
+@pose_bp.route("/summary/<sid>", methods=["GET"])
+def get_summary(sid):
+    if sid not in summary_storage:
+        return jsonify({"error": "Summary tidak ditemukan"}), 404
+
+    summary_entry = summary_storage[sid]
+    timestamp = summary_entry["timestamp"]
+
+    if datetime.now() - timestamp > timedelta(hours=24):
+        del summary_storage[sid]
+        return jsonify({"error": "Summary expired"}), 410
+
+    return jsonify(summary_entry["data"])

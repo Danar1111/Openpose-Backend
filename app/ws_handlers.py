@@ -10,6 +10,7 @@ from app.utils.summarize_results import summarize_results
 
 clients = {}
 session_results = {}
+summary_storage = {}
 TIMEOUT = 300  # 5 menit
 
 @socketio.on('connect')
@@ -17,6 +18,8 @@ def handle_connect():
     sid = request.sid
     clients[sid] = {'last_active': time.time()}
     print(f"Client {sid} connected")
+
+    emit('connected_info', {'sid': sid})
 
     emit('control', {'command': 'start_capture', 'interval': 5000})
 
@@ -33,8 +36,12 @@ def handle_disconnect():
 
         if all_results:
             summary = summarize_results(all_results)
-            print(f"Summary for {sid}:")
-            print(summary)
+            summary_storage[sid] = {
+                "data": summary,
+                "timestamp": datetime.now()
+            }
+
+            print(f"Summary for {sid}:\n{summary}")
 
         del session_results[sid]
 
@@ -60,12 +67,25 @@ def handle_frame(data):
 def monitor_clients():
     while True:
         now = time.time()
+
+        # Auto disconnect idle clients
         for sid in list(clients.keys()):
             if now - clients[sid]['last_active'] > TIMEOUT:
                 print(f"Auto disconnect {sid} (idle)")
                 socketio.emit('auto_disconnect', {'reason': 'Idle timeout'}, room=sid)
                 disconnect(sid)
                 del clients[sid]
+
+        # Hapus summary yang sudah > 24 jam
+        expired = []
+        for sid, entry in summary_storage.items():
+            if datetime.now() - entry["timestamp"] > timedelta(hours=24):
+                expired.append(sid)
+
+        for sid in expired:
+            print(f"Summary expired for {sid}, deleting...")
+            del summary_storage[sid]
+
         time.sleep(60)
 
 # Mulai background task saat import
