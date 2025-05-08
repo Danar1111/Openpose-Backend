@@ -1,0 +1,160 @@
+<!-- FINAL CLIENT OTOMATIS MUNCULKAN SUMMARY -->
+<html>
+<head>
+  <title>Realtime Ergonomic Posture Detection</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+  <h1>Posture Detection Client</h1>
+
+  <label for="cameraSelect">Pilih Kamera:</label>
+  <select id="cameraSelect"></select>
+
+  <br><br>
+
+  <button id="connectBtn">Connect</button>
+  <button id="disconnectBtn">Disconnect</button>
+
+  <p id="status">Status: Disconnected</p>
+  <video id="video" width="320" height="240" autoplay></video>
+
+  <h2>SID</h2>
+  <pre id="resultSID">Belum ada data...</pre>
+  <h2>Hasil Deteksi (Realtime):</h2>
+  <pre id="resultDisplay">Belum ada data...</pre>
+  <h2>Hasil Summary:</h2>
+  <pre id="summaryDisplay">Belum ada summary...</pre>
+
+  <script>
+    let socket = null;
+    let captureInterval = null;
+    let userSID = null;
+    let currentStream = null;
+
+    const cameraSelect = document.getElementById('cameraSelect');
+    const video = document.getElementById('video');
+    const statusText = document.getElementById('status');
+    const resultSID = document.getElementById('resultSID');
+    const resultDisplay = document.getElementById('resultDisplay');
+    const summaryDisplay = document.getElementById('summaryDisplay');
+
+    // Load camera list and start default camera
+    window.addEventListener('load', () => {
+      navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+          const videoDevices = devices.filter(d => d.kind === 'videoinput');
+          videoDevices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || `Camera ${cameraSelect.length + 1}`;
+            cameraSelect.appendChild(option);
+          });
+
+          if (videoDevices.length > 0) {
+            cameraSelect.selectedIndex = 0;
+            startCamera(videoDevices[0].deviceId);
+          }
+        });
+    });
+
+    cameraSelect.onchange = () => {
+      startCamera(cameraSelect.value);
+    };
+
+    function startCamera(deviceId) {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+
+      navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
+        .then(stream => {
+          currentStream = stream;
+          video.srcObject = stream;
+        });
+    }
+
+    document.getElementById('connectBtn').onclick = () => {
+      if (socket && socket.connected) return;
+
+      socket = io();
+
+      socket.on('connect', () => {
+        statusText.textContent = "Status: Connected";
+      });
+
+      socket.on('connected_info', (data) => {
+        userSID = data.sid;
+        console.log("SID diterima:", userSID);
+        resultSID.textContent = `${userSID}`;
+      });
+
+      socket.on('control', (data) => {
+        if (data.command === 'start_capture') {
+          const intervalTime = data.interval;
+
+          if (captureInterval) clearInterval(captureInterval);
+
+          captureInterval = setInterval(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL('image/png');
+            socket.emit('frame', { image: dataURL });
+          }, intervalTime);
+        }
+      });
+
+      socket.on('processed_result', (data) => {
+        const result = data.result;
+        resultDisplay.textContent =
+          `Feedback: ${result.feedback}\n\n` +
+          `Skor Bahu (RULA): ${result.skor_bahu_rula}\n` +
+          `Skor Leher (REBA): ${result.skor_leher_reba}\n` +
+          `Skor Lutut (REBA): ${result.skor_lutut_reba}\n` +
+          `Skor Pergelangan (RULA): ${result.skor_pergelangan_rula}\n` +
+          `Skor Siku (REBA): ${result.skor_siku_reba}\n` +
+          `Skor Siku (RULA): ${result.skor_siku_rula}\n` +
+          `Skor Trunk (REBA): ${result.skor_trunk_reba}\n` +
+          `Total REBA: ${result.total_reba}\n` +
+          `Total RULA: ${result.total_rula}\n\n` +
+          `Sudut Bahu: ${result.sudut.sudut_bahu}\n` +
+          `Sudut Leher: ${result.sudut.sudut_leher}\n` +
+          `Sudut Lutut: ${result.sudut.sudut_lutut}\n` +
+          `Sudut Paha-Punggung: ${result.sudut.sudut_paha_punggung}\n` +
+          `Sudut Pergelangan: ${result.sudut.sudut_pergelangan}\n` +
+          `Sudut Siku: ${result.sudut.sudut_siku}\n` +
+          `Sudut Siku (RULA): ${result.sudut.sudut_siku_rula}`;
+      });
+
+      socket.on('summary_result', (data) => {
+        summaryDisplay.textContent = JSON.stringify(data, null, 2);
+      });
+
+      socket.on('disconnect', () => {
+        statusText.textContent = "Status: Disconnected";
+        if (captureInterval) clearInterval(captureInterval);
+
+        fetch(`/websocket/summary?sid=${userSID}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            if (data.error) {
+              summaryDisplay.textContent = `Error: ${data.error}`;
+            } else {
+              summaryDisplay.textContent = JSON.stringify(data, null, 2);
+            }
+          });
+      });
+    };
+
+    document.getElementById('disconnectBtn').onclick = () => {
+      if (socket && socket.connected) {
+        socket.disconnect();
+      }
+    };
+  </script>
+</body>
+</html>

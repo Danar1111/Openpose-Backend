@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, request, jsonify, send_from_directory, render_template
 from app.services.pose_estimation import process_pose_from_bytes
 from app.services.video_processor import process_video
 from app.services.job_manager import create_job, get_job
@@ -75,3 +75,7 @@ def get_summary():
         return jsonify({"error": "Summary expired"}), 410
 
     return jsonify(summary_entry["data"])
+
+@pose_bp.route("/ws-client")
+def serve_client():
+    return render_template("client.html")
