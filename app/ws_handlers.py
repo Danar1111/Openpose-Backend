@@ -3,6 +3,8 @@ from flask import request
 from . import socketio
 import time
 import threading
+import os
+import base64
 
 clients = {}
 
@@ -30,6 +32,23 @@ def handle_frame(data):
 
     image_data = data['image']  # base64 image
     print(f"Received frame from {sid}")
+
+    # Simpan gambar ke folder
+    save_dir = os.path.join("saved_frames", sid)
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Buat nama file unik berdasarkan timestamp
+    filename = f"frame_{int(time.time())}.png"
+    file_path = os.path.join(save_dir, filename)
+
+    # Decode base64 dan simpan
+    header, encoded = image_data.split(",", 1)
+    binary_data = base64.b64decode(encoded)
+
+    with open(file_path, "wb") as f:
+        f.write(binary_data)
+    
+    print(f"Gambar disimpan: {file_path}")
 
     # Simulasi proses (bisa panggil process_pose_from_bytes disini)
     result = "Dummy Processed"
