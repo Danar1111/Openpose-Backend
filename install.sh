@@ -87,7 +87,7 @@ source ~/.bashrc
 cd ~
 
 # Untuk install backend
-pip3 install flask cloudpickle pandas scikit-learn joblib flask-socketio eventlet
+pip3 install flask cloudpickle pandas scikit-learn joblib flask-socketio eventlet flask-cors
 
 mkdir skripsi && cd skripsi
 
