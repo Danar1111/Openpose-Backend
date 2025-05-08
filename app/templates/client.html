@@ -137,17 +137,19 @@
         statusText.textContent = "Status: Disconnected";
         if (captureInterval) clearInterval(captureInterval);
 
-        fetch(`/websocket/summary?sid=${userSID}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            if (data.error) {
-              summaryDisplay.textContent = `Error: ${data.error}`;
-            } else {
-              summaryDisplay.textContent = JSON.stringify(data, null, 2);
-            }
-          });
-      });
+        setTimeout(() => {
+            fetch(`/websocket/summary?sid=${userSID}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.error) {
+                        summaryDisplay.textContent = `Error: ${data.error}`;
+                    } else {
+                        summaryDisplay.textContent = JSON.stringify(data, null, 2);
+                    }
+                });
+            });
+        }, 3000);
     };
 
     document.getElementById('disconnectBtn').onclick = () => {
