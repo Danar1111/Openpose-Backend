@@ -3,12 +3,13 @@ from flask import request
 from . import socketio
 import time
 import threading
-import os
 import base64
 import shutil
+from app.service.ws_pose_estimation import process_pose_from_bytes
+from app.utils.summarize_results import summarize_results
 
 clients = {}
-
+session_results = {}
 TIMEOUT = 300  # 5 menit
 
 @socketio.on('connect')
@@ -24,42 +25,35 @@ def handle_disconnect():
     sid = request.sid
     if sid in clients:
         del clients[sid]
-
-    # Hapus folder frame user ini
-    save_dir = os.path.join("saved_frames", sid)
-    if os.path.exists(save_dir):
-        shutil.rmtree(save_dir)
-        print(f"Folder {save_dir} dihapus")
     
     print(f"Client {sid} disconnected")
+
+    if sid in session_results:
+        all_results = session_results[sid]
+
+        if all_results:
+            summary = summarize_results(all_results)
+            print(f"Summary for {sid}:")
+            print(summary)
+
+        del session_results[sid]
 
 @socketio.on('frame')
 def handle_frame(data):
     sid = request.sid
     clients[sid]['last_active'] = time.time()
 
-    image_data = data['image']  # base64 image
+    image_data = data['image']
+    header, encoded = image_data.split(",", 1)
+    image_bytes = base64.b64decode(encoded)
     print(f"Received frame from {sid}")
 
-    # Simpan gambar ke folder
-    save_dir = os.path.join("saved_frames", sid)
-    os.makedirs(save_dir, exist_ok=True)
+    result = process_pose_from_bytes(image_bytes)
 
-    # Buat nama file unik berdasarkan timestamp
-    filename = f"frame_{int(time.time())}.png"
-    file_path = os.path.join(save_dir, filename)
+    if sid not in session_results:
+        session_results[sid] = []
 
-    # Decode base64 dan simpan
-    header, encoded = image_data.split(",", 1)
-    binary_data = base64.b64decode(encoded)
-
-    with open(file_path, "wb") as f:
-        f.write(binary_data)
-    
-    print(f"Gambar disimpan: {file_path}")
-
-    # Simulasi proses (bisa panggil process_pose_from_bytes disini)
-    result = "Dummy Processed"
+    session_results[sid].append(result)
     
     emit('processed_result', {'result': result})
 
