@@ -60,8 +60,10 @@ def get_video_result():
     
     return jsonify(job)
 
-@pose_bp.route("/summary/<sid>", methods=["GET"])
-def get_summary(sid):
+@pose_bp.route("/websocket/summary", methods=["GET"])
+def get_summary():
+    sid = request.args.get("sid")
+
     if sid not in summary_storage:
         return jsonify({"error": "Summary tidak ditemukan"}), 404
 
