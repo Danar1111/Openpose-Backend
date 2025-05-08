@@ -129,27 +129,27 @@
           `Sudut Siku (RULA): ${result.sudut.sudut_siku_rula}`;
       });
 
-      socket.on('summary_result', (data) => {
-        summaryDisplay.textContent = JSON.stringify(data, null, 2);
-      });
+        socket.on('summary_result', (data) => {
+            summaryDisplay.textContent = JSON.stringify(data, null, 2);
+        });
 
-      socket.on('disconnect', () => {
+        socket.on('disconnect', () => {
         statusText.textContent = "Status: Disconnected";
         if (captureInterval) clearInterval(captureInterval);
 
         setTimeout(() => {
             fetch(`/websocket/summary?sid=${userSID}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    if (data.error) {
-                        summaryDisplay.textContent = `Error: ${data.error}`;
-                    } else {
-                        summaryDisplay.textContent = JSON.stringify(data, null, 2);
-                    }
-                });
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.error) {
+                    summaryDisplay.textContent = `Error: ${data.error}`;
+                } else {
+                    summaryDisplay.textContent = JSON.stringify(data, null, 2);
+                }
             });
         }, 3000);
+        });
     };
 
     document.getElementById('disconnectBtn').onclick = () => {
