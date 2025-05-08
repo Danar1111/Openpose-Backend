@@ -1,4 +1,5 @@
-from flask_socketio import emit, disconnect, request
+from flask_socketio import emit, disconnect
+from flask import request
 from . import socketio
 import time
 import threading
