@@ -5,6 +5,7 @@ import time
 import threading
 import os
 import base64
+import shutil
 
 clients = {}
 
@@ -23,6 +24,13 @@ def handle_disconnect():
     sid = request.sid
     if sid in clients:
         del clients[sid]
+
+    # Hapus folder frame user ini
+    save_dir = os.path.join("saved_frames", sid)
+    if os.path.exists(save_dir):
+        shutil.rmtree(save_dir)
+        print(f"Folder {save_dir} dihapus")
+    
     print(f"Client {sid} disconnected")
 
 @socketio.on('frame')
