@@ -15,19 +15,24 @@ summary_storage = {}
 TIMEOUT = 300  # 5 menit
 
 @socketio.on('connect')
-def handle_connect(data):
+def handle_connect():
+    sid = request.sid
+    clients[sid] = {'last_active': time.time()}
+    print(f"Client {sid} connected")
+
+    # Info SID langsung
+    emit('connected_info', {'sid': sid}, room=sid)
+
+@socketio.on('init')
+def handle_init(data):
     sid = request.sid
     interval = data.get('interval', 5000)
-    print(f"Client {sid} connected, interval {interval} ms")
 
-    clients[sid] = {
-        'last_active': time.time(),
-        'interval': interval
-    }
-
-    emit('connected_info', {'sid': sid})
+    clients[sid]['interval'] = interval
+    print(f"Client {sid} memilih interval: {interval} ms")
 
     emit('control', {'command': 'start_capture', 'interval': interval}, room=sid)
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
