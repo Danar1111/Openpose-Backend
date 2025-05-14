@@ -9,6 +9,13 @@
 
   <label for="cameraSelect">Pilih Kamera:</label>
   <select id="cameraSelect"></select>
+  <label for="intervalSelect">Interval (ms):</label>
+  <select id="intervalSelect">
+    <option value="1000">1 detik</option>
+    <option value="3000">3 detik</option>
+    <option value="5000" selected>5 detik</option>
+    <option value="10000">10 detik</option>
+  </select>
 
   <br><br>
 
@@ -80,6 +87,10 @@
 
       socket.on('connect', () => {
         statusText.textContent = "Status: Connected";
+
+        const intervalValue = parseInt(document.getElementById('intervalSelect').value);
+
+        socket.emit('init', { interval: intervalValue });
       });
 
       socket.on('connected_info', (data) => {
