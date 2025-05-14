@@ -15,7 +15,7 @@ summary_storage = {}
 TIMEOUT = 300  # 5 menit
 
 @socketio.on('connect')
-def handle_connect():
+def handle_connect(data):
     sid = request.sid
     interval = data.get('interval', 5000)
     print(f"Client {sid} connected, interval {interval} ms")
