@@ -17,12 +17,17 @@ TIMEOUT = 300  # 5 menit
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    clients[sid] = {'last_active': time.time()}
-    print(f"Client {sid} connected")
+    interval = data.get('interval', 5000)
+    print(f"Client {sid} connected, interval {interval} ms")
+
+    clients[sid] = {
+        'last_active': time.time(),
+        'interval': interval
+    }
 
     emit('connected_info', {'sid': sid})
 
-    emit('control', {'command': 'start_capture', 'interval': 5000})
+    emit('control', {'command': 'start_capture', 'interval': interval}, room=sid)
 
 @socketio.on('disconnect')
 def handle_disconnect():
