@@ -56,17 +56,43 @@ def summarize_results(results):
     rula_summary = rula_summary_counter.most_common(1)[0][0] if rula_summary_counter else "-"
     reba_summary = reba_summary_counter.most_common(1)[0][0] if reba_summary_counter else "-"
 
-    # Susun ringkasan teks
-    summary_feedback = (
-        f"Analisa dari {count} frame:\n\n"
-        f"Ringkasan RULA: {rula_summary}\n"
-        f"Ringkasan REBA: {reba_summary}\n\n"
-        f"Mayoritas Skor:\n" + "\n".join([f"- {k}: {v}" for k, v in majority_scores.items()]) + "\n\n"
-        f"Skor Minimum:\n" + "\n".join([f"- {k}: {min_scores[k]}" for k in min_scores]) + "\n\n"
-        f"Skor Maksimum:\n" + "\n".join([f"- {k}: {max_scores[k]}" for k in max_scores]) + "\n\n"
-        f"Rata-rata Skor:\n" + "\n".join([f"- {k}: {average_scores[k]:.2f}" for k in average_scores]) + "\n\n"
-        f"Rata-rata Sudut Tubuh:\n" + "\n".join([f"- {k}: {average_sudut[k]:.2f}" for k in average_sudut]) + "\n\n"
-        f"Feedback Terbanyak:\n{feedback_summary}"
+    def generate_dynamic_summary(count, majority_scores, average_scores, min_scores, max_scores, average_sudut, rula_summary, reba_summary, feedback_summary):
+        rula_avg = average_scores.get("rula_final_score", 0)
+        reba_avg = average_scores.get("reba_final_score", 0)
+        rula_max = max_scores.get("rula_final_score", 0)
+        reba_max = max_scores.get("reba_final_score", 0)
+        rula_major = majority_scores.get("rula_final_score", 0)
+        reba_major = majority_scores.get("reba_final_score", 0)
+
+        def interpret_score(avg, major, maks, label):
+            if major >= 5 or maks >= 7:
+                return f"{label} menunjukkan postur yang sangat berisiko. Terdapat frame dengan skor tinggi ({maks}), mayoritas juga di level tinggi ({major})."
+            elif major >= 3 or avg >= 3:
+                return f"{label} menunjukkan postur yang perlu perhatian. Rata-rata skor berada di sekitar {avg:.2f}, mayoritas {major}, dan skor maksimum {maks}."
+            else:
+                return f"{label} menunjukkan postur relatif aman. Rata-rata {avg:.2f}, mayoritas {major}, dan skor maksimum hanya {maks}."
+
+        summary_feedback = (
+            f"Analisa dari {count} frame:\n\n"
+            f"{interpret_score(rula_avg, rula_major, rula_max, 'RULA')}\n"
+            f"{interpret_score(reba_avg, reba_major, reba_max, 'REBA')}\n\n"
+            f"Ringkasan teks terbanyak:\n {feedback_summary}\n\n"
+            f"Rata-rata sudut tubuh:\n" +
+            "\n".join([f"- {k.replace('_', ' ').capitalize()}: {v:.2f}°" for k, v in average_sudut.items()]) + "\n"
+        )
+
+        return summary_feedback
+
+    summary_feedback = generate_dynamic_summary(
+        count,
+        majority_scores,
+        average_scores,
+        min_scores,
+        max_scores,
+        average_sudut,
+        rula_summary,
+        reba_summary,
+        feedback_summary
     )
 
     return {
