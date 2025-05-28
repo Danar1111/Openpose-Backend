@@ -3,7 +3,7 @@ import numpy as np
 import json
 import os
 import subprocess
-import pandas
+import pandas as pd
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 from app.services.model_predictor import predict_from_keypoints_df
