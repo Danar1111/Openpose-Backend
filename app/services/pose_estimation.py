@@ -130,7 +130,7 @@ def process_openpose_results(json_folder, image_folder):
                 hasil_prediksi = predict_from_keypoints_df(keypoint_df)
 
                 # Path gambar input
-                image_file = file.replace('.json', '.jpg')
+                image_file = file.split('_keypoints')[0] + '.jpg'
                 hasil_prediksi['gambar_path'] = os.path.join(image_folder, image_file)
 
                 results.append(hasil_prediksi)
