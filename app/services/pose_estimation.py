@@ -141,13 +141,13 @@ def get_keypoints(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
             if keypoints_array is None:
-                return 0.0, 0.0, 0.0
+                return -1.0, -1.0, -1.0
             x, y, c = keypoints_array[0][index]
             if any(np.isnan([x, y, c])) or c < 0.01:
-                return 0.0, 0.0, 0.0
+                return -1.0, -1.0, -1.0
             return float(x), float(y), float(c)
         except:
-            return 0.0, 0.0, 0.0
+            return -1.0, -1.0, -1.0
     
     keypoints_dict = {
         'hip': get_point(9, keypoints),
@@ -172,13 +172,13 @@ def get_keypoints_video(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
             if keypoints_array is None:
-                return 0.0, 0.0, 0.0
+                return -1.0, -1.0, -1.0
             x, y, c = keypoints_array[index]
             if any(np.isnan([x, y, c])) or c < 0.01:
-                return 0.0, 0.0, 0.0
+                return -1.0, -1.0, -1.0
             return float(x), float(y), float(c)
         except:
-            return 0.0, 0.0, 0.0
+            return -1.0, -1.0, -1.0
     
     keypoints_dict = {
         'hip': get_point(9, keypoints),
