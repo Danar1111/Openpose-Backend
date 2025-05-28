@@ -192,7 +192,7 @@ def process_openpose_results(json_folder, image_folder):
                     hand_right_keypoints = np.array(person["hand_right_keypoints_2d"]).reshape(-1, 3)
 
             if keypoints is not None:
-                keypoint_df = get_keypoints(keypoints, hand_right_keypoints)
+                keypoint_df = get_keypoints_video(keypoints, hand_right_keypoints)
 
                 hasil_prediksi = predict_from_keypoints_df(keypoint_df)
 
@@ -208,6 +208,35 @@ def get_keypoints(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
             x, y, c = keypoints_array[0][index]
+            return (x, y, c) if c > 0.01 else (0, 0, 0)
+        except:
+            return (0, 0, 0)
+    
+    keypoints_dict = {
+        'hip': get_point(9, keypoints),
+        'knee': get_point(10, keypoints),
+        'ankle': get_point(11, keypoints),
+        'shoulder': get_point(2, keypoints),
+        'shoulder_left': get_point(5, keypoints),
+        'elbow': get_point(3, keypoints),
+        'elbow_left': get_point(6, keypoints),
+        'wrist': get_point(4, keypoints),
+        'hand_middle': get_point(9, hand_kpts) if hand_kpts is not None else (0, 0, 0),
+        'back': get_point(8, keypoints),
+        'neck': get_point(1, keypoints),
+        'head': get_point(17, keypoints),
+        'nose': get_point(0, keypoints)
+    }
+
+    print(keypoints_dict)
+    print(keypoints)
+
+    return pd.DataFrame([keypoints_dict])
+
+def get_keypoints_video(keypoints, hand_kpts):
+    def get_point(index, keypoints_array):
+        try:
+            x, y, c = keypoints_array[index]
             return (x, y, c) if c > 0.01 else (0, 0, 0)
         except:
             return (0, 0, 0)
