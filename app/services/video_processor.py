@@ -44,7 +44,8 @@ def process_video(job_folder, job_id):
                     keypoints_data = json.load(f)
                     keypoints_raw = keypoints_data["people"][0]["pose_keypoints_2d"]
                     processed_keypoints = np.array(keypoints_raw).reshape((-1, 3)).tolist()
-                    print(keypoints_raw)
+                    if isinstance(processed_keypoints[0], list):  # jadi 2D
+                        processed_keypoints = [processed_keypoints]
 
                 output_image_path = generate_pose_visualization(
                     image_bytes, processed_keypoints, best_frame, is_flipped=(direction_score > 0)
