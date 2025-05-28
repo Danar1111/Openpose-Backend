@@ -141,7 +141,7 @@ def process_pose_from_bytes(image_bytes):
 
     print("[DEBUG] Final dict sudut:", angles)
 
-    keypoint_df = get_keypoints(keypoints, hand_right_keypoints)
+    keypoint_df = get_keypoints(keypoints, hand_kpts)
 
     # Prediksi model
     hasil_prediksi = predict_from_keypoints_df(keypoint_df)

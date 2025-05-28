@@ -6,6 +6,7 @@ from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
 from app.services.model_predictor import predict_from_angles
 from app.services.image_visualizer import generate_pose_visualization
+from app.services.pose_estimation import get_keypoints
 
 def calculate_angle(a, b, c):
     a = np.array(a)
@@ -140,8 +141,10 @@ def process_pose_from_bytes(image_bytes):
 
     print("[DEBUG] Final dict sudut:", angles)
 
+    keypoint_df = get_keypoints(keypoints, hand_kpts)
+
     # Prediksi model
-    hasil_prediksi = predict_from_angles(angles)
+    hasil_prediksi = predict_from_keypoints_df(keypoint_df)
 
     # # Generate visualisasi dan ambil path gambar
     # gambar_path = generate_pose_visualization(processed_image, processed_keypoints, hasil_prediksi, is_flipped)
