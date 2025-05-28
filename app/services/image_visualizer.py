@@ -11,6 +11,18 @@ def get_color_by_score(score):
     else:
         return (0, 0, 255)  # Merah
 
+def get_risk_label(score):
+    if score <= 1:
+        return "Negligible"
+    elif score <= 3:
+        return "Low"
+    elif score <= 7:
+        return "Medium"
+    elif score <= 10:
+        return "High"
+    else:
+        return "Very High"
+
 def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipped):
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -48,8 +60,27 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 # Gabungkan overlay dengan gambar asli (alpha blending → transparansi)
                 alpha = 0.4
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+                cv2.putText(img, f"{mapping[key]}", (int(x) + 30, int(y) - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
         except:
             continue
+    
+    # Ambil skor akhir RULA dan REBA
+    rula_final = hasil_prediksi.get("rula_final_score", 0)
+    reba_final = hasil_prediksi.get("reba_final_score", 0)
+    rula_label = get_risk_label(rula_final)
+    reba_label = get_risk_label(reba_final)
+
+    # Tambahkan overlay header abu transparan
+    overlay = img.copy()
+    cv2.rectangle(overlay, (0, 0), (img.shape[1], 60), (50, 50, 50), -1)
+    img = cv2.addWeighted(overlay, 0.6, img, 0.4, 0)
+
+    # Tampilkan skor RULA & REBA di bagian atas
+    cv2.putText(img, f"RULA: {rula_final} ({rula_label})", (20, 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
+    cv2.putText(img, f"REBA: {reba_final} ({reba_label})", (300, 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
 
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
