@@ -96,7 +96,7 @@ def summarize_results(results):
     )
 
     return {
-        "feedback": summary_feedback,
+        "summary": summary_feedback,
         "majority_scores": majority_scores,
         "average_scores": average_scores,
         "min_scores": min_scores,
