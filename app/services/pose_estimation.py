@@ -139,18 +139,15 @@ def process_openpose_results(json_folder, image_folder):
 
 def get_keypoints(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
-        if name in keypoints_df.columns:
-            value = keypoints_df[name].values[0]
-
-            if isinstance(value, np.ndarray):
-                value = tuple(value.tolist())
-
-            if isinstance(value, (list, tuple)):
-                if len(value) == 3:
-                    return value
-                elif len(value) == 2:
-                    return (value[0], value[1], 0.0)
-        return (0.0, 0.0, 0.0)
+        try:
+            if keypoints_array is None:
+                return 0.0, 0.0, 0.0
+            x, y, c = keypoints_array[0][index]
+            if any(np.isnan([x, y, c])) or c < 0.01:
+                return 0.0, 0.0, 0.0
+            return float(x), float(y), float(c)
+        except:
+            return 0.0, 0.0, 0.0
     
     keypoints_dict = {
         'hip': get_point(9, keypoints),
