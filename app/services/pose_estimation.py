@@ -5,7 +5,7 @@ import os
 import subprocess
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
-from app.services.model_predictor import predict_from_angles
+from app.services.model_predictor import predict_from_keypoints_df
 from app.services.image_visualizer import generate_pose_visualization
 
 def calculate_angle(a, b, c):
@@ -141,8 +141,10 @@ def process_pose_from_bytes(image_bytes):
 
     print("[DEBUG] Final dict sudut:", angles)
 
+    keypoint_df = get_keypoints(keypoints, hand_right_keypoints)
+
     # Prediksi model
-    hasil_prediksi = predict_from_angles(angles)
+    hasil_prediksi = predict_from_keypoints_df(keypoint_df)
 
     # Generate visualisasi dan ambil path gambar
     gambar_path = generate_pose_visualization(processed_image, processed_keypoints, hasil_prediksi, is_flipped)
@@ -189,10 +191,9 @@ def process_openpose_results(json_folder, image_folder):
                     hand_right_keypoints = np.array(person["hand_right_keypoints_2d"]).reshape(-1, 3)
 
             if keypoints is not None:
-                # hitung sudut → gunakan fungsi process_pose_from_bytes logic
-                angles = calculate_angles_from_keypoints(keypoints, hand_right_keypoints)
+                keypoint_df = get_keypoints(keypoints, hand_right_keypoints)
 
-                hasil_prediksi = predict_from_angles(angles)
+                hasil_prediksi = predict_from_keypoints_df(keypoint_df)
 
                 # Path gambar input
                 image_file = file.replace('.json', '.jpg')
@@ -202,65 +203,31 @@ def process_openpose_results(json_folder, image_folder):
 
     return results
 
-def calculate_angles_from_keypoints(keypoints, hand_kpts):
-    def get_coords_video(keypoints, index):
-        if keypoints is None or len(keypoints) <= index:
-            return None
-        x, y, c = keypoints[index]
-        return (int(x), int(y)) if c > 0.1 else None
+def get_keypoints(keypoints, hand_kpts):
+    def get_point(index, keypoints_array):
+        try:
+            x, y, c = keypoints_array[index]
+            return (x, y, c) if c > 0.01 else (0, 0, 0)
+        except:
+            return (0, 0, 0)
+    
+    keypoints_dict = {
+        'hip': get_point(9, keypoints),
+        'knee': get_point(10, keypoints),
+        'ankle': get_point(11, keypoints),
+        'shoulder': get_point(2, keypoints),
+        'shoulder_left': get_point(5, keypoints),
+        'elbow': get_point(3, keypoints),
+        'elbow_left': get_point(6, keypoints),
+        'wrist': get_point(4, keypoints),
+        'hand_middle': get_point(9, hand_kpts) if hand_kpts is not None else (0, 0, 0),
+        'back': get_point(8, keypoints),
+        'neck': get_point(1, keypoints),
+        'head': get_point(17, keypoints),
+        'nose': get_point(0, keypoints)
+    }
 
-    def get_hand_coords_video(hand_keypoints, index):
-        if hand_keypoints is None or len(hand_keypoints) <= index:
-            return None
-        x, y, c = hand_keypoints[index]
-        return (int(x), int(y)) if c > 0.1 else None
-
-    hip = get_coords_video(keypoints, 9)
-    knee = get_coords_video(keypoints, 10)
-    ankle = get_coords_video(keypoints, 11)
-    shoulder = get_coords_video(keypoints, 2)
-    elbow = get_coords_video(keypoints, 3)
-    wrist = get_coords_video(keypoints, 4)
-    neck = get_coords_video(keypoints, 1)
-    head = get_coords_video(keypoints, 17)
-    back = get_coords_video(keypoints, 8)
-
-    thumb = get_hand_coords_video(hand_kpts, 4)
-    index_finger = get_hand_coords_video(hand_kpts, 8)
-    pinky = get_hand_coords_video(hand_kpts, 20)
-
-    angles = {}
-
-    if hip and knee and ankle:
-        angles["sudut_lutut"] = calculate_angle(hip, knee, ankle) if hip and knee and ankle else 0
-    if shoulder and elbow and wrist:
-        angles["sudut_siku"] = calculate_angle(shoulder, elbow, wrist) if shoulder and elbow and wrist else 0
-        angles["sudut_siku_rula"] = angles["sudut_siku"]
-    if back and neck and head:
-        angles["sudut_leher"] = calculate_angle(back, neck, head) if back and neck and head else 0
-    if knee and hip and neck:
-        angles["sudut_paha_punggung"] = calculate_angle(knee, hip, neck) if knee and hip and neck else 0
-    if wrist and thumb and pinky:
-        angles["sudut_pergelangan"] = calculate_angle(thumb, wrist, pinky) if thumb and wrist and pinky else 0
-    if back and shoulder and elbow:
-        angles["sudut_bahu"] = calculate_angle(back, shoulder, elbow) if back and shoulder and elbow else 0
-
-    # Isi 0 jika tidak ada
-    required_keys = [
-        "sudut_lutut",
-        "sudut_siku",
-        "sudut_siku_rula",
-        "sudut_leher",
-        "sudut_paha_punggung",
-        "sudut_pergelangan",
-        "sudut_bahu"
-    ]
-
-    for key in required_keys:
-        if key not in angles:
-            angles[key] = 0
-
-    return angles
+    return pd.DataFrame([keypoints_dict])
 
 def check_video_direction(video_path, check_frame=10):
     cap = cv2.VideoCapture(video_path)

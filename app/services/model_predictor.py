@@ -4,7 +4,7 @@ import json
 import os
 
 # Load model saat modul diimpor
-MODEL_PATH = os.path.abspath("./app/models/wrapped_ergo_model.pkl")
+MODEL_PATH = os.path.abspath("./app/models/posture_model.pkl")
 
 with open(MODEL_PATH, "rb") as f:
     model = cloudpickle.load(f)
@@ -19,27 +19,7 @@ def convert_to_python_type(obj):
     else:
         return obj
 
-def predict_from_angles(angle_dict):
-    # Susun DataFrame dari sudut
-    required_columns = [
-        "sudut_lutut",
-        "sudut_siku",
-        "sudut_siku_rula",
-        "sudut_leher",
-        "sudut_paha_punggung",
-        "sudut_pergelangan",
-        "sudut_bahu"
-    ]
-    
-    data_input = {col: angle_dict.get(col, 0) for col in required_columns}
-    df = pd.DataFrame([angle_dict])
-    
-    # Prediksi
-    hasil_prediksi = model.predict_pose(df)
-    
-    # Konversi output ke native Python
-    hasil_python = convert_to_python_type(hasil_prediksi)
-
-    # Gabungkan hasil sudut ke hasil prediksi
-    hasil_python["sudut"] = angle_dict
-    return hasil_python
+def predict_from_keypoints_df(keypoint_df: pd.DataFrame) -> dict:
+    result = model.predict_from_keypoints(keypoint_df)
+    result_dict = convert_to_python_type(result)
+    return result_dict
