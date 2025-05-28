@@ -2,6 +2,7 @@ from collections import defaultdict, Counter
 
 def summarize_results(results):
     count = len(results)
+    print(results)
     
     skor_counter = defaultdict(Counter)
     skor_total = defaultdict(int)

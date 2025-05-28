@@ -165,7 +165,6 @@ def get_keypoints(keypoints, hand_kpts):
         'nose': get_point(0, keypoints)
     }
 
-    print(keypoints_dict)
     return keypoints_dict
 
 def get_keypoints_video(keypoints, hand_kpts):
