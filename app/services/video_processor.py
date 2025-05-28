@@ -43,7 +43,7 @@ def process_video(job_folder, job_id):
                 with open(keypoints_path, 'r') as f:
                     keypoints_data = json.load(f)
                     keypoints_raw = keypoints_data["people"][0]["pose_keypoints_2d"]
-                    processed_keypoints = np.array(keypoints_raw).reshape((-1, 3)).tolist())
+                    processed_keypoints = np.array(keypoints_raw).reshape((-1, 3)).tolist()
                     print(keypoints_raw)
 
                 output_image_path = generate_pose_visualization(
