@@ -140,15 +140,14 @@ def process_openpose_results(json_folder, image_folder):
 def get_keypoints(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
-            point = keypoints_array[0][index] if keypoints_array.ndim == 3 else keypoints_array[index]
-            x, y, c = point
-
-            # Tangani jika ada NaN di x, y, atau c
+            if keypoints_array is None:
+                return 0.0, 0.0, 0.0
+            x, y, c = keypoints_array[0][index]
             if any(np.isnan([x, y, c])) or c < 0.01:
-                return (0, 0, 0)
-            return (x, y, c)
+                return 0.0, 0.0, 0.0
+            return float(x), float(y), float(c)
         except:
-            return (0, 0, 0)
+            return 0.0, 0.0, 0.0
     
     keypoints_dict = {
         'hip': get_point(9, keypoints),
@@ -171,15 +170,14 @@ def get_keypoints(keypoints, hand_kpts):
 def get_keypoints_video(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
-            point = keypoints_array[index] if keypoints_array.ndim == 3 else keypoints_array[index]
-            x, y, c = point
-
-            # Tangani jika ada NaN di x, y, atau c
+            if keypoints_array is None:
+                return 0.0, 0.0, 0.0
+            x, y, c = keypoints_array[index]
             if any(np.isnan([x, y, c])) or c < 0.01:
-                return (0, 0, 0)
-            return (x, y, c)
+                return 0.0, 0.0, 0.0
+            return float(x), float(y), float(c)
         except:
-            return (0, 0, 0)
+            return 0.0, 0.0, 0.0
     
     keypoints_dict = {
         'hip': get_point(9, keypoints),
