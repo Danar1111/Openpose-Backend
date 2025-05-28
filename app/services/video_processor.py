@@ -39,11 +39,13 @@ def process_video(job_folder, job_id):
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
                 with open(image_path, 'rb') as f:
                     image_bytes = f.read()
+                    print(image_bytes)
 
                 with open(keypoints_path, 'r') as f:
                     keypoints_data = json.load(f)
                     keypoints_raw = keypoints_data["people"][0]["pose_keypoints_2d"]
                     processed_keypoints = np.array(keypoints_raw).reshape((-1, 3)).tolist()
+                    print(processed_keypoints)
 
                 output_image_path = generate_pose_visualization(
                     image_bytes, processed_keypoints, best_frame, is_flipped=(direction_score > 0)
