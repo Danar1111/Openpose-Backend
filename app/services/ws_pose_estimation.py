@@ -4,7 +4,7 @@ import json
 import os
 from openpose import pyopenpose as op
 from app.utils.image_converter import bytes_to_cv2
-from app.services.model_predictor import predict_from_angles
+from app.services.model_predictor import predict_from_keypoints_df
 from app.services.image_visualizer import generate_pose_visualization
 from app.services.pose_estimation import get_keypoints
 
