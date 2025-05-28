@@ -2,8 +2,7 @@ from collections import defaultdict, Counter
 
 def summarize_results(results):
     count = len(results)
-    print(results)
-    
+
     skor_counter = defaultdict(Counter)
     skor_total = defaultdict(int)
     skor_min = defaultdict(lambda: float('inf'))
@@ -13,53 +12,61 @@ def summarize_results(results):
     sudut_count = defaultdict(int)
 
     feedback_counter = Counter()
+    rula_summary_counter = Counter()
+    reba_summary_counter = Counter()
 
     for res in results:
+        # Hitung skor RULA/REBA
         for key, value in res.items():
-            if key.startswith("skor_"):
+            if key.endswith("_score"):
                 skor_counter[key][value] += 1
                 skor_total[key] += value
                 skor_min[key] = min(skor_min[key], value)
                 skor_max[key] = max(skor_max[key], value)
 
-            elif key == "details":
-                for sudut_key, sudut_val in res["details"].items():
-                    if sudut_key.startswith("sudut_"):
-                        sudut_data[sudut_key] += sudut_val
-                        sudut_count[sudut_key] += 1
+        # Hitung sudut
+        for sudut_key, sudut_val in res.get("details", {}).items():
+            if sudut_key.startswith("sudut_"):
+                sudut_data[sudut_key] += sudut_val
+                sudut_count[sudut_key] += 1
 
+        # Hitung feedback
         feedback_text = res.get("feedback", "")
         if feedback_text:
             feedback_counter[feedback_text] += 1
 
-    # Ambil skor majority dan statistik lainnya
-    majority_scores = {}
-    average_scores = {}
-    min_scores = {}
-    max_scores = {}
+        # Hitung summary
+        summary_data = res.get("summary", {})
+        if "rula_summary" in summary_data:
+            rula_summary_counter[summary_data["rula_summary"]] += 1
+        if "reba_summary" in summary_data:
+            reba_summary_counter[summary_data["reba_summary"]] += 1
 
-    for key, counter in skor_counter.items():
-        majority_scores[key] = counter.most_common(1)[0][0]
-        average_scores[key] = skor_total[key] / count
-        min_scores[key] = skor_min[key]
-        max_scores[key] = skor_max[key]
+    # Hitung statistik skor
+    majority_scores = {k: v.most_common(1)[0][0] for k, v in skor_counter.items()}
+    average_scores = {k: skor_total[k] / count for k in skor_counter}
+    min_scores = {k: skor_min[k] for k in skor_counter}
+    max_scores = {k: skor_max[k] for k in skor_counter}
 
     # Hitung rata-rata sudut
-    average_sudut = {key: sudut_data[key] / sudut_count[key] for key in sudut_data}
+    average_sudut = {k: sudut_data[k] / sudut_count[k] for k in sudut_data}
 
-    # Feedback paling sering
-    most_common_feedback = feedback_counter.most_common(1)
-    feedback_summary = "; ".join([f"{text}" for text, freq in most_common_feedback])
+    # Feedback dan summary paling umum
+    feedback_summary = feedback_counter.most_common(1)[0][0] if feedback_counter else "-"
+    rula_summary = rula_summary_counter.most_common(1)[0][0] if rula_summary_counter else "-"
+    reba_summary = reba_summary_counter.most_common(1)[0][0] if reba_summary_counter else "-"
 
-    # Summary teks
+    # Susun ringkasan teks
     summary_feedback = (
-        f"Hasil analisa {count} frame.\n\n"
-        f"Mayoritas skor per bagian:\n" + "\n".join([f"- {k}: {v}" for k, v in majority_scores.items()]) + "\n\n"
-        f"Rata-rata skor:\n" + "\n".join([f"- {k}: {average_scores[k]:.2f}" for k in average_scores]) + "\n\n"
-        f"Skor maksimum:\n" + "\n".join([f"- {k}: {max_scores[k]}" for k in max_scores]) + "\n\n"
-        f"Skor minimum:\n" + "\n".join([f"- {k}: {min_scores[k]}" for k in min_scores]) + "\n\n"
-        f"Rata-rata sudut tubuh:\n" + "\n".join([f"- {k}: {average_sudut[k]:.2f}" for k in average_sudut]) + "\n\n"
-        f"Feedback paling sering:\n{feedback_summary}"
+        f"Analisa dari {count} frame:\n\n"
+        f"Ringkasan RULA: {rula_summary}\n"
+        f"Ringkasan REBA: {reba_summary}\n\n"
+        f"Mayoritas Skor:\n" + "\n".join([f"- {k}: {v}" for k, v in majority_scores.items()]) + "\n\n"
+        f"Skor Minimum:\n" + "\n".join([f"- {k}: {min_scores[k]}" for k in min_scores]) + "\n\n"
+        f"Skor Maksimum:\n" + "\n".join([f"- {k}: {max_scores[k]}" for k in max_scores]) + "\n\n"
+        f"Rata-rata Skor:\n" + "\n".join([f"- {k}: {average_scores[k]:.2f}" for k in average_scores]) + "\n\n"
+        f"Rata-rata Sudut Tubuh:\n" + "\n".join([f"- {k}: {average_sudut[k]:.2f}" for k in average_sudut]) + "\n\n"
+        f"Feedback Terbanyak:\n{feedback_summary}"
     )
 
     return {
@@ -69,5 +76,8 @@ def summarize_results(results):
         "min_scores": min_scores,
         "max_scores": max_scores,
         "average_sudut": average_sudut,
-        "total_frames": count
+        "total_frames": count,
+        "most_common_feedback": feedback_summary,
+        "rula_summary": rula_summary,
+        "reba_summary": reba_summary
     }
