@@ -16,6 +16,13 @@ def run_openpose(image, opWrapper):
     opWrapper.emplaceAndPop(datums)
     return datum
 
+def get_coords(keypoints, index):
+    try:
+        x, y, c = keypoints[0][index]
+        return (int(x), int(y)) if c > 0.1 else None
+    except:
+        return None
+
 def detect_facing_direction(keypoints):
     score = 0
     nose = get_coords(keypoints, 0)
