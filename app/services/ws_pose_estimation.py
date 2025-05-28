@@ -75,7 +75,7 @@ def process_pose_from_bytes(image_bytes):
     hand_kpts = datum.handKeypoints[1] if datum.handKeypoints is not None else None  # right hand
 
     keypoint_df = get_keypoints(keypoints, hand_kpts)
-    print(keypoints)
+    print(keypoint_df)
 
     # Prediksi model
     hasil_prediksi = predict_from_keypoints_df(keypoint_df)
