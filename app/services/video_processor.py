@@ -24,7 +24,7 @@ def process_video(job_folder, job_id):
         run_openpose_on_folder(frames_folder, json_folder)
 
         sampled_results = process_openpose_results(json_folder, frames_folder)
-                final_result = summarize_results(sampled_results)
+        final_result = summarize_results(sampled_results)
 
         if sampled_results:
             ranked = sorted(sampled_results, key=lambda x: max(x.get("reba_final_score", 0), x.get("rula_final_score", 0)), reverse=True)
