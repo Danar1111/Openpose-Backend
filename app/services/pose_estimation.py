@@ -76,7 +76,6 @@ def process_pose_from_bytes(image_bytes):
     hand_kpts = datum.handKeypoints[1] if datum.handKeypoints is not None else None  # right hand
 
     keypoint_df = get_keypoints(keypoints, hand_kpts)
-    print(keypoint_df)
 
     # Prediksi model
     hasil_prediksi = predict_from_keypoints_df(keypoint_df)
@@ -166,6 +165,7 @@ def get_keypoints(keypoints, hand_kpts):
         'nose': get_point(0, keypoints)
     }
 
+    print(keypoints_dict)
     return pd.DataFrame([keypoints_dict])
 
 def get_keypoints_video(keypoints, hand_kpts):
