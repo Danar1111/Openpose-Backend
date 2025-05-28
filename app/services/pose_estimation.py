@@ -229,6 +229,7 @@ def get_keypoints(keypoints, hand_kpts):
     }
 
     print(keypoints_dict)
+    print(keypoints)
 
     return pd.DataFrame([keypoints_dict])
 
