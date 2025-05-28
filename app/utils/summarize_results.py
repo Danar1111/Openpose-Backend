@@ -105,5 +105,6 @@ def summarize_results(results):
         "total_frames": count,
         "most_common_feedback": feedback_summary,
         "rula_summary": rula_summary,
-        "reba_summary": reba_summary
+        "reba_summary": reba_summary,
+        "representative_image": None
     }

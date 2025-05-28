@@ -24,7 +24,7 @@ def process_video(job_folder, job_id):
         run_openpose_on_folder(frames_folder, json_folder)
 
         sampled_results = process_openpose_results(json_folder, frames_folder)
-        final_result = summarize_results(sampled_results)
+                final_result = summarize_results(sampled_results)
 
         if sampled_results:
             ranked = sorted(sampled_results, key=lambda x: max(x.get("reba_final_score", 0), x.get("rula_final_score", 0)), reverse=True)
@@ -34,17 +34,14 @@ def process_video(job_folder, job_id):
             image_path = best_frame.get("gambar_path")
 
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
-                # Baca file gambar dan JSON untuk visualisasi ulang
                 image = cv2.imread(image_path)
                 with open(keypoints_path, 'r') as f:
-                    keypoints = f.read()  # atau json.load(f) jika kamu pakai dict
+                    keypoints = f.read()
 
-                # generate ulang pose dengan skor terbaik
                 output_image_path = generate_pose_visualization(
                     image, keypoints, best_frame, is_flipped=(direction_score > 0)
                 )
 
-                # simpan path visualisasi ke dalam hasil akhir
                 final_result["representative_image"] = output_image_path
 
         update_job(job_id, final_result)
