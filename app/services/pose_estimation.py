@@ -207,7 +207,7 @@ def process_openpose_results(json_folder, image_folder):
 def get_keypoints(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
         try:
-            x, y, c = keypoints_array[index]
+            x, y, c = keypoints_array[0][index]
             return (x, y, c) if c > 0.01 else (0, 0, 0)
         except:
             return (0, 0, 0)
