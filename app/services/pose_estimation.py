@@ -82,6 +82,7 @@ def process_pose_from_bytes(image_bytes):
 
     # Generate visualisasi dan ambil path gambar
     gambar_path = generate_pose_visualization(processed_image, processed_keypoints, hasil_prediksi, is_flipped)
+    print(processed_keypoints)
 
     # Tambahkan ke hasil prediksi
     hasil_prediksi["gambar_path"] = gambar_path
