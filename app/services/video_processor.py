@@ -31,7 +31,7 @@ def process_video(job_folder, job_id):
             best_frame = ranked[0]
             print(best_frame)
 
-            keypoints_path = best_frame.get("gambar_path", "").replace("frames/", "json/").replace(".jpg", ".json")
+            keypoints_path = best_frame.get("gambar_path", "").replace("frames/", "json/").replace(".jpg", "_keypoints.json")
             image_path = best_frame.get("gambar_path")
             print(keypoints_path)
             print(image_path)
