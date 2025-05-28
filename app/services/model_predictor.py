@@ -20,7 +20,7 @@ def convert_to_python_type(obj):
         return obj
 
 def predict_from_keypoints_df(keypoint_df):
-    dataframe = pd.DataFrame([keypoint_dict])
+    dataframe = pd.DataFrame([keypoint_df])
     result = model.predict_from_keypoints(dataframe)
     result_dict = convert_to_python_type(result)
     return result_dict
