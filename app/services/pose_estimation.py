@@ -166,7 +166,7 @@ def get_keypoints(keypoints, hand_kpts):
     }
 
     print(keypoints_dict)
-    return pd.DataFrame([keypoints_dict])
+    return keypoints_dict
 
 def get_keypoints_video(keypoints, hand_kpts):
     def get_point(index, keypoints_array):
@@ -196,7 +196,7 @@ def get_keypoints_video(keypoints, hand_kpts):
         'nose': get_point(0, keypoints)
     }
 
-    return pd.DataFrame([keypoints_dict])
+    return keypoints_dict
 
 def check_video_direction(video_path, check_frame=10):
     cap = cv2.VideoCapture(video_path)
