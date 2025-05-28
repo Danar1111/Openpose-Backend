@@ -228,6 +228,8 @@ def get_keypoints(keypoints, hand_kpts):
         'nose': get_point(0, keypoints)
     }
 
+    print(keypoints_dict)
+
     return pd.DataFrame([keypoints_dict])
 
 def check_video_direction(video_path, check_frame=10):
