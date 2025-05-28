@@ -37,12 +37,16 @@ def process_video(job_folder, job_id):
             print(image_path)
 
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
-                image = cv2.imread(image_path)
+                with open(image_path, 'rb') as f:
+                    image_bytes = f.read()
+
                 with open(keypoints_path, 'r') as f:
-                    keypoints = f.read()
+                    keypoints_data = json.load(f)
+                    keypoints_raw = keypoints_data["people"][0]["pose_keypoints_2d"]
+                    processed_keypoints = np.array(keypoints_raw).reshape((-1, 3)).tolist()
 
                 output_image_path = generate_pose_visualization(
-                    image, keypoints, best_frame, is_flipped=(direction_score > 0)
+                    image_bytes, processed_keypoints, best_frame, is_flipped=(direction_score > 0)
                 )
 
                 final_result["representative_image"] = output_image_path
