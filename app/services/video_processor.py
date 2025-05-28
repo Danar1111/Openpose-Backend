@@ -2,6 +2,7 @@ import cv2
 import os
 import shutil
 import json
+import numpy as np
 from app.services.pose_estimation import check_video_direction, flip_video, run_openpose_on_folder, process_openpose_results
 from app.services.job_manager import update_job
 from app.utils.summarize_results import summarize_results
