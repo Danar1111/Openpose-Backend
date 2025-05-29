@@ -118,31 +118,86 @@
         }
       });
 
-      socket.on('processed_result', (data) => {
-        const result = data.result;
-        resultDisplay.textContent =
-          `Feedback: ${result.feedback}\n\n` +
-          `Skor Bahu (RULA): ${result.skor_bahu_rula}\n` +
-          `Skor Leher (REBA): ${result.skor_leher_reba}\n` +
-          `Skor Lutut (REBA): ${result.skor_lutut_reba}\n` +
-          `Skor Pergelangan (RULA): ${result.skor_pergelangan_rula}\n` +
-          `Skor Siku (REBA): ${result.skor_siku_reba}\n` +
-          `Skor Siku (RULA): ${result.skor_siku_rula}\n` +
-          `Skor Trunk (REBA): ${result.skor_trunk_reba}\n` +
-          `Total REBA: ${result.total_reba}\n` +
-          `Total RULA: ${result.total_rula}\n\n` +
-          `Sudut Bahu: ${result.sudut.sudut_bahu}\n` +
-          `Sudut Leher: ${result.sudut.sudut_leher}\n` +
-          `Sudut Lutut: ${result.sudut.sudut_lutut}\n` +
-          `Sudut Paha-Punggung: ${result.sudut.sudut_paha_punggung}\n` +
-          `Sudut Pergelangan: ${result.sudut.sudut_pergelangan}\n` +
-          `Sudut Siku: ${result.sudut.sudut_siku}\n` +
-          `Sudut Siku (RULA): ${result.sudut.sudut_siku_rula}`;
-      });
+		socket.on('processed_result', (data) => {
+			const result = data.result;
+			const sudut = result.details;
 
-        socket.on('summary_result', (data) => {
-            summaryDisplay.textContent = JSON.stringify(data, null, 2);
-        });
+			resultDisplay.textContent =
+			`Feedback: ${result.feedback}\n\n` +
+			`REBA:\n` +
+			`  Upper Arm Score: ${result.reba_upper_arm_score}\n` +
+			`  Lower Arm Score: ${result.reba_lower_arm_score}\n` +
+			`  Wrist Score:     ${result.reba_wrist_score}\n` +
+			`  Neck Score:      ${result.reba_neck_score}\n` +
+			`  Trunk Score:     ${result.reba_trunk_score}\n` +
+			`  Leg Score:       ${result.reba_leg_score}\n` +
+			`  Final Score:     ${result.reba_final_score}\n\n` +
+
+			`RULA:\n` +
+			`  Upper Arm Score: ${result.rula_upper_arm_score}\n` +
+			`  Lower Arm Score: ${result.rula_lower_arm_score}\n` +
+			`  Wrist Score:     ${result.rula_wrist_score}\n` +
+			`  Neck Score:      ${result.rula_neck_score}\n` +
+			`  Trunk Score:     ${result.rula_trunk_score}\n` +
+			`  Leg Score:       ${result.rula_leg_score}\n` +
+			`  Final Score:     ${result.rula_final_score}\n\n` +
+
+			`Sudut:\n` +
+			`  Bahu:        ${sudut.sudut_bahu}\n` +
+			`  Leher:       ${sudut.sudut_leher}\n` +
+			`  Lutut:       ${sudut.sudut_lutut}\n` +
+			`  Punggung:    ${sudut.sudut_punggung}\n` +
+			`  Siku:        ${sudut.sudut_siku}\n` +
+			`  Pergelangan: ${sudut.sudut_pergelangan}\n\n` +
+
+			`Adjustment:\n` +
+			`  Shoulder Raised:     ${sudut.adjust_shoulder_raised}\n` +
+			`  Arm Supported:       ${sudut.adjust_arm_supported}\n` +
+			`  Neck Twist:          ${sudut.adjust_neck_twist}\n` +
+			`  Trunk Twist:         ${sudut.adjust_trunk_twist}\n` +
+			`  Wrist Twist:         ${sudut.adjust_wrist_twist}\n` +
+			`  Legs/Feet Supported: ${sudut.adjust_legs_feet}`;
+		});
+
+		socket.on('summary_result', (data) => {
+			const s = data;
+
+			summaryDisplay.textContent =
+			`Summary dari ${s.total_frames} frame:\n\n` +
+
+			`Feedback Umum:\n${s.most_common_feedback}\n\n` +
+
+			`Rangkuman Analisis:\n${s.summary}\n` +
+
+			`Rata-rata Skor REBA:\n` +
+			`  Final:        ${s.average_scores.reba_final_score}\n` +
+			`  Upper Arm:    ${s.average_scores.reba_upper_arm_score}\n` +
+			`  Lower Arm:    ${s.average_scores.reba_lower_arm_score}\n` +
+			`  Wrist:        ${s.average_scores.reba_wrist_score}\n` +
+			`  Neck:         ${s.average_scores.reba_neck_score}\n` +
+			`  Trunk:        ${s.average_scores.reba_trunk_score}\n` +
+			`  Legs:         ${s.average_scores.reba_leg_score}\n\n` +
+
+			`Rata-rata Skor RULA:\n` +
+			`  Final:        ${s.average_scores.rula_final_score}\n` +
+			`  Upper Arm:    ${s.average_scores.rula_upper_arm_score}\n` +
+			`  Lower Arm:    ${s.average_scores.rula_lower_arm_score}\n` +
+			`  Wrist:        ${s.average_scores.rula_wrist_score}\n` +
+			`  Neck:         ${s.average_scores.rula_neck_score}\n` +
+			`  Trunk:        ${s.average_scores.rula_trunk_score}\n` +
+			`  Legs:         ${s.average_scores.rula_leg_score}\n\n` +
+
+			`Rata-rata Sudut Tubuh:\n` +
+			`  Bahu:         ${s.average_sudut.sudut_bahu}°\n` +
+			`  Siku:         ${s.average_sudut.sudut_siku}°\n` +
+			`  Leher:        ${s.average_sudut.sudut_leher}°\n` +
+			`  Lutut:        ${s.average_sudut.sudut_lutut}°\n` +
+			`  Punggung:     ${s.average_sudut.sudut_punggung}°\n` +
+			`  Pergelangan:  ${s.average_sudut.sudut_pergelangan}°\n\n` +
+
+			`Ringkasan REBA: ${s.reba_summary}\n` +
+			`Ringkasan RULA: ${s.rula_summary}`;
+		});
 
         socket.on('disconnect', () => {
         statusText.textContent = "Status: Disconnected";
