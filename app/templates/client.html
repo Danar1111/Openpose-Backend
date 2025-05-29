@@ -4,109 +4,97 @@
   <title>Realtime Ergonomic Posture Detection</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
   <style>
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background-color: #f8fafc;
-			margin: 0;
-			padding: 20px;
-			color: #333;
-		}
-		h1, h2 {
-			color: #2563eb;
-		}
-		label {
-			margin-right: 10px;
-		}
-		select, button {
-			padding: 6px 12px;
-			margin-right: 10px;
-			border-radius: 5px;
-			border: 1px solid #ccc;
-			font-size: 14px;
-		}
-		button {
-			background-color: #3b82f6;
-			color: white;
-			cursor: pointer;
-		}
-		button:hover {
-			background-color: #2563eb;
-		}
-		#status {
-			font-weight: bold;
-			color: #10b981;
-		}
-		.section {
-			margin-top: 20px;
-			padding: 20px;
-			background-color: #ffffff;
-			border-radius: 10px;
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-		}
-		.summary-line {
-			margin: 5px 0;
-			padding: 3px 0;
-		}
-		.highlight {
-			font-weight: bold;
-			color: #0f172a;
-		}
-		pre {
-			white-space: pre-wrap;
-			word-wrap: break-word;
-			background-color: #f1f5f9;
-			padding: 15px;
-			border-radius: 8px;
-			font-size: 14px;
-			border-left: 4px solid #3b82f6;
-		}
-		#video {
-			display: block;
-			margin: 20px auto;
-			border-radius: 10px;
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-			max-width: 100%;
-			height: auto;
-		}
-		.grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			gap: 10px;
-			margin-top: 10px;
-		}
-		.grid-item {
-			background-color: #e2e8f0;
-			border-radius: 6px;
-			padding: 10px;
-			text-align: center;
-			font-size: 14px;
-			position: relative;
-		}
-		.grid-item.warning {
-			background-color: #fde68a;
-			border: 2px solid #f59e0b;
-		}
-		.grid-item.warning::after {
-			content: '⚠ Default';
-			position: absolute;
-			bottom: 6px;
-			right: 6px;
-			font-size: 12px;
-			color: #92400e;
-		}
-		.grid-container {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-			gap: 12px;
-			margin-top: 15px;
-		}
-		.result-box {
-			background-color: #f1f5f9;
-			padding: 12px;
-			border-radius: 8px;
-			border-left: 4px solid #2563eb;
-		}
-	</style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1, h2 {
+      color: #2563eb;
+    }
+    label {
+      margin-right: 10px;
+    }
+    select, button {
+      padding: 6px 12px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    #status {
+      font-weight: bold;
+      color: #10b981;
+    }
+    .section {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .summary-line {
+      margin: 5px 0;
+      padding: 3px 0;
+    }
+    #video {
+      display: block;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 100%;
+      height: auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .grid-item {
+      background-color: #e2e8f0;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      position: relative;
+    }
+    .grid-item.warning {
+      background-color: #fde68a;
+      border: 2px solid #f59e0b;
+    }
+    .grid-item.warning::after {
+      content: '⚠ Default';
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      font-size: 12px;
+      color: #92400e;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .result-box {
+      background-color: #f1f5f9;
+      padding: 8px;
+      border-radius: 6px;
+      border-left: 4px solid #2563eb;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
   <h1>Posture Detection Client</h1>
@@ -209,29 +197,54 @@
     }
 
 	function renderResultBoxes(result) {
-		resultBoxes.innerHTML = '';
+      resultBoxes.innerHTML = '';
 
-		const makeBox = (title, content) => {
-			const box = document.createElement('div');
-			box.className = 'result-box';
-			box.innerHTML = `<strong>${title}</strong><br><pre>${content}</pre>`;
-			return box;
-		};
+      const makeSmallBox = (label, value) => {
+        const box = document.createElement('div');
+        box.className = 'result-box';
+        box.innerHTML = `<strong>${label}</strong><br>${value}`;
+        return box;
+      };
 
-		resultBoxes.appendChild(makeBox('Feedback', result.feedback));
+      resultBoxes.appendChild(makeSmallBox('Feedback', result.feedback));
 
-		const reba = `Upper Arm Score: ${result.reba_upper_arm_score}\nLower Arm Score: ${result.reba_lower_arm_score}\nWrist Score: ${result.reba_wrist_score}\nNeck Score: ${result.reba_neck_score}\nTrunk Score: ${result.reba_trunk_score}\nLeg Score: ${result.reba_leg_score}\nFinal Score: ${result.reba_final_score}`;
-		resultBoxes.appendChild(makeBox('REBA', reba));
+      const rebaItems = {
+        'REBA Upper': result.reba_upper_arm_score,
+        'REBA Lower': result.reba_lower_arm_score,
+        'REBA Wrist': result.reba_wrist_score,
+        'REBA Neck': result.reba_neck_score,
+        'REBA Trunk': result.reba_trunk_score,
+        'REBA Leg': result.reba_leg_score,
+        'REBA Final': result.reba_final_score,
+      };
+      for (const [k, v] of Object.entries(rebaItems)) {
+        resultBoxes.appendChild(makeSmallBox(k, v));
+      }
 
-		const rula = `Upper Arm Score: ${result.rula_upper_arm_score}\nLower Arm Score: ${result.rula_lower_arm_score}\nWrist Score: ${result.rula_wrist_score}\nNeck Score: ${result.rula_neck_score}\nTrunk Score: ${result.rula_trunk_score}\nLeg Score: ${result.rula_leg_score}\nFinal Score: ${result.rula_final_score}`;
-		resultBoxes.appendChild(makeBox('RULA', rula));
+      const rulaItems = {
+        'RULA Upper': result.rula_upper_arm_score,
+        'RULA Lower': result.rula_lower_arm_score,
+        'RULA Wrist': result.rula_wrist_score,
+        'RULA Neck': result.rula_neck_score,
+        'RULA Trunk': result.rula_trunk_score,
+        'RULA Leg': result.rula_leg_score,
+        'RULA Final': result.rula_final_score,
+      };
+      for (const [k, v] of Object.entries(rulaItems)) {
+        resultBoxes.appendChild(makeSmallBox(k, v));
+      }
 
-		const sudut = result.details;
-		const angles = `Bahu: ${sudut.sudut_bahu}\nLeher: ${sudut.sudut_leher}\nLutut: ${sudut.sudut_lutut}\nPunggung: ${sudut.sudut_punggung}\nSiku: ${sudut.sudut_siku}\nPergelangan: ${sudut.sudut_pergelangan}`;
-		resultBoxes.appendChild(makeBox('Sudut', angles));
-
-		const adj = `Shoulder Raised: ${sudut.adjust_shoulder_raised}\nArm Supported: ${sudut.adjust_arm_supported}\nNeck Twist: ${sudut.adjust_neck_twist}\nTrunk Twist: ${sudut.adjust_trunk_twist}\nWrist Twist: ${sudut.adjust_wrist_twist}\nLegs/Feet Supported: ${sudut.adjust_legs_feet}`;
-		resultBoxes.appendChild(makeBox('Adjustment', adj));
+      const adjItems = {
+        'Shoulder Up': result.details.adjust_shoulder_raised,
+        'Arm Support': result.details.adjust_arm_supported,
+        'Neck Twist': result.details.adjust_neck_twist,
+        'Trunk Twist': result.details.adjust_trunk_twist,
+        'Wrist Twist': result.details.adjust_wrist_twist,
+        'Legs Support': result.details.adjust_legs_feet,
+      };
+      for (const [k, v] of Object.entries(adjItems)) {
+        resultBoxes.appendChild(makeSmallBox(k, v));
+      }
     }
 
     document.getElementById('connectBtn').onclick = () => {
