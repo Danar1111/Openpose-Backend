@@ -262,6 +262,8 @@
 	const rulaGroup = document.getElementById("rulaGroup");
 	const adjustGroup = document.getElementById("adjustGroup");
 	const feedbackBox = document.getElementById("feedbackBox");
+	const connectBtn = document.getElementById('connectBtn');
+	const disconnectBtn = document.getElementById('disconnectBtn');
 
 	function copyText(id) {
 		const text = document.getElementById(id).innerText;
@@ -342,7 +344,9 @@
 
     // Load camera list and start default camera
     window.addEventListener('load', () => {
-      navigator.mediaDevices.enumerateDevices()
+		connectBtn.disabled = false;
+		disconnectBtn.disabled = true;
+      	navigator.mediaDevices.enumerateDevices()
         .then(devices => {
           const videoDevices = devices.filter(d => d.kind === 'videoinput');
           videoDevices.forEach(device => {
@@ -400,6 +404,8 @@
 
       socket.on('connect', () => {
         statusText.textContent = "Status: Connected";
+		connectBtn.disabled = true;
+		disconnectBtn.disabled = false;
 
         const intervalValue = parseInt(document.getElementById('intervalSelect').value);
 
@@ -478,6 +484,8 @@
 
         socket.on('disconnect', () => {
         statusText.textContent = "Status: Disconnected";
+		connectBtn.disabled = false;
+		disconnectBtn.disabled = true;
         if (captureInterval) clearInterval(captureInterval);
 
         setTimeout(() => {
