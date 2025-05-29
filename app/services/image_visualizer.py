@@ -41,7 +41,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         "sudut_lutut": hasil_prediksi.get("reba_leg_score", 0),
         "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
         "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
-        "sudut_paha_punggung": hasil_prediksi.get("reba_trunk_score", 0),
+        "sudut_punggung": hasil_prediksi.get("reba_trunk_score", 0),
         "sudut_pergelangan": hasil_prediksi.get("rula_wrist_score", 0),
         "sudut_bahu": hasil_prediksi.get("rula_upper_arm_score", 0),
     }
@@ -50,7 +50,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         "sudut_lutut": 13 if is_flipped else 10,
         "sudut_siku": 6 if is_flipped else 3,
         "sudut_leher": 18 if is_flipped else 17,
-        "sudut_paha_punggung": 12 if is_flipped else 9,
+        "sudut_punggung": 12 if is_flipped else 9,
         "sudut_pergelangan": 7 if is_flipped else 4,
         "sudut_bahu": 5 if is_flipped else 2,
     }
@@ -72,7 +72,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 # Ambil nilai sudut tubuhnya
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
-                
+
                 if sudut_val is not None:
                     sudut_text = f"{sudut_val:.0f}°"
                     skor_text = f"skor: {mapping[key]}"
