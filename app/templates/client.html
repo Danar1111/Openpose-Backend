@@ -174,7 +174,67 @@
     const statusText = document.getElementById('status');
     const resultSID = document.getElementById('resultSID');
     const summaryDisplay = document.getElementById('summaryDisplay');
-	const resultBoxes = document.getElementById('resultBoxes');
+	const rebaGroup = document.getElementById("rebaGroup");
+	const rulaGroup = document.getElementById("rulaGroup");
+	const adjustGroup = document.getElementById("adjustGroup");
+	const feedbackBox = document.getElementById("feedbackBox");
+
+	function createBox(label, value) {
+		const div = document.createElement("div");
+		div.className = "value-box";
+		div.innerHTML = `<strong>${label}</strong><br>${value}`;
+		return div;
+	}
+
+	function renderResult(result) {
+		feedbackBox.textContent = result.feedback;
+
+		const rebaItems = {
+		"Upper Arm": result.reba_upper_arm_score,
+		"Lower Arm": result.reba_lower_arm_score,
+		"Wrist": result.reba_wrist_score,
+		"Neck": result.reba_neck_score,
+		"Trunk": result.reba_trunk_score,
+		"Leg": result.reba_leg_score,
+		"Final": result.reba_final_score,
+		};
+
+		const rulaItems = {
+		"Upper Arm": result.rula_upper_arm_score,
+		"Lower Arm": result.rula_lower_arm_score,
+		"Wrist": result.rula_wrist_score,
+		"Neck": result.rula_neck_score,
+		"Trunk": result.rula_trunk_score,
+		"Leg": result.rula_leg_score,
+		"Final": result.rula_final_score,
+		};
+
+		const adjustItems = {
+		"Shoulder Up": result.details.adjust_shoulder_raised,
+		"Arm Support": result.details.adjust_arm_supported,
+		"Neck Twist": result.details.adjust_neck_twist,
+		"Trunk Twist": result.details.adjust_trunk_twist,
+		"Wrist Twist": result.details.adjust_wrist_twist,
+		"Legs Support": result.details.adjust_legs_feet,
+		};
+
+		// Kosongkan dulu
+		rebaGroup.innerHTML = '';
+		rulaGroup.innerHTML = '';
+		adjustGroup.innerHTML = '';
+
+		for (const [key, val] of Object.entries(rebaItems)) {
+		rebaGroup.appendChild(createBox("REBA " + key, val));
+		}
+
+		for (const [key, val] of Object.entries(rulaItems)) {
+		rulaGroup.appendChild(createBox("RULA " + key, val));
+		}
+
+		for (const [key, val] of Object.entries(adjustItems)) {
+		adjustGroup.appendChild(createBox(key, val));
+		}
+	}
 
     // Load camera list and start default camera
     window.addEventListener('load', () => {
@@ -229,57 +289,6 @@
 		});
     }
 
-	function renderResultBoxes(result) {
-      resultBoxes.innerHTML = '';
-
-      const makeSmallBox = (label, value) => {
-        const box = document.createElement('div');
-        box.className = 'result-box';
-        box.innerHTML = `<strong>${label}</strong><br>${value}`;
-        return box;
-      };
-
-      resultBoxes.appendChild(makeSmallBox('Feedback', result.feedback));
-
-      const rebaItems = {
-        'REBA Upper': result.reba_upper_arm_score,
-        'REBA Lower': result.reba_lower_arm_score,
-        'REBA Wrist': result.reba_wrist_score,
-        'REBA Neck': result.reba_neck_score,
-        'REBA Trunk': result.reba_trunk_score,
-        'REBA Leg': result.reba_leg_score,
-        'REBA Final': result.reba_final_score,
-      };
-      for (const [k, v] of Object.entries(rebaItems)) {
-        resultBoxes.appendChild(makeSmallBox(k, v));
-      }
-
-      const rulaItems = {
-        'RULA Upper': result.rula_upper_arm_score,
-        'RULA Lower': result.rula_lower_arm_score,
-        'RULA Wrist': result.rula_wrist_score,
-        'RULA Neck': result.rula_neck_score,
-        'RULA Trunk': result.rula_trunk_score,
-        'RULA Leg': result.rula_leg_score,
-        'RULA Final': result.rula_final_score,
-      };
-      for (const [k, v] of Object.entries(rulaItems)) {
-        resultBoxes.appendChild(makeSmallBox(k, v));
-      }
-
-      const adjItems = {
-        'Shoulder Up': result.details.adjust_shoulder_raised,
-        'Arm Support': result.details.adjust_arm_supported,
-        'Neck Twist': result.details.adjust_neck_twist,
-        'Trunk Twist': result.details.adjust_trunk_twist,
-        'Wrist Twist': result.details.adjust_wrist_twist,
-        'Legs Support': result.details.adjust_legs_feet,
-      };
-      for (const [k, v] of Object.entries(adjItems)) {
-        resultBoxes.appendChild(makeSmallBox(k, v));
-      }
-    }
-
     document.getElementById('connectBtn').onclick = () => {
       if (socket && socket.connected) return;
 
@@ -321,7 +330,7 @@
 		socket.on('processed_result', (data) => {
 			const result = data.result;
 			renderAngleGrid(result.details, result.default_value_flags);
-			renderResultBoxes(result);
+			renderResult(result);
 		});
 
 		function renderSummaryToText(s) {
