@@ -67,8 +67,11 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
                 alpha = 0.4
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-                cv2.putText(img, f"{mapping[key]}", (int(x) + 30, int(y) - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                sudut_val = hasil_prediksi.get("details", {}).get(key, None)
+                if sudut_val is not None:
+                    label = f"{sudut_val:.1f}"
+                    cv2.putText(img, label, (int(x) + 30, int(y) - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
         except:
             continue
     
