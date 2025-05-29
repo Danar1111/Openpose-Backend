@@ -60,7 +60,11 @@ def process_pose_from_bytes(image_bytes):
     datum = run_openpose(image, opWrapper)
     keypoints = datum.poseKeypoints
 
-    processed_image = image_bytes
+    output_image = datum.cvOutputData
+    _, encoded_img = cv2.imencode(".jpg", output_image)
+    processed_image = encoded_img.tobytes()
+
+    # processed_image = image_bytes
     processed_keypoints = keypoints
     is_flipped = False
 
