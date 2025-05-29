@@ -1,6 +1,6 @@
 sudo apt-get update -y
 
-apt-get -y --no-install-recommends upgrade && \
+sudo apt-get -y --no-install-recommends upgrade && \
 	apt-get install -y --no-install-recommends \
 	nvidia-cuda-toolkit \
 	build-essential \
