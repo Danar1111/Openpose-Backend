@@ -116,33 +116,31 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
     # === LEGEND SKOR ===
     legend_x = 10
-    legend_y = img.shape[0] - 155
-    spacing = 22
-    radius = 8
+    legend_y = img.shape[0] - 130
+    spacing = 18
+    radius = 6
 
     score_labels = [
-        (1, "Skor 1 - Baik"),
-        (2, "Skor 2 - Cukup"),
-        (3, "Skor 3 - Perlu Diperhatikan"),
-        (4, "Skor 4 - Berisiko"),
-        (5, "Skor 5 - Tinggi"),
-        (6, "Skor 6 - Sangat Tinggi"),
-        (7, "Skor 7+ - Bahaya"),
+        (1, "Baik"),
+        (2, "Cukup"),
+        (3, "Perlu Diperhatikan"),
+        (4, "Berisiko"),
+        (5, "Tinggi"),
+        (6, "Sangat Tinggi"),
+        (7, "Bahaya"),
     ]
 
     # Kotak latar belakang
     cv2.rectangle(img, (legend_x - 5, legend_y - 10),
-                (legend_x + 230, legend_y + spacing * len(score_labels)),
-                (30, 30, 30), -1)
+              (legend_x + 160, legend_y + spacing * len(score_labels)),
+              (30, 30, 30), -1)
 
     for i, (score, desc) in enumerate(score_labels):
         cy = legend_y + i * spacing
         color = get_color_by_score(score)
-        # Lingkaran warna
         cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
-        # Teks deskripsi
-        cv2.putText(img, desc, (legend_x + 2 * radius + 8, cy + 5),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+        cv2.putText(img, desc, (legend_x + 2 * radius + 6, cy + 5),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.38, (255, 255, 255), 1)
 
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
