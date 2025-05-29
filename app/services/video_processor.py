@@ -38,6 +38,8 @@ def process_video(job_folder, job_id):
             keypoints_path = best_frame.get("gambar_path", "").replace("frames/", "json/").replace(".jpg", "_keypoints.json")
             original_frame = os.path.basename(best_frame["gambar_path"])
             image_path = os.path.join(output_image_folder, original_frame)
+            print(image_path)
+            print(original_frame)
 
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
                 with open(image_path, 'rb') as f:
