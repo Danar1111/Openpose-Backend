@@ -69,14 +69,18 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 if sudut_val is not None:
                     label = f"{sudut_val:.1f} deg"
 
-                    text_x = int(x) - w // 2
-                    text_y = int(y) - radius - 5
+                    # Ukuran teks
+                    (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
 
-                    # Gambar outline putih (lebih tebal)
+                    # Geser sedikit ke kiri dan atas lingkaran
+                    text_x = int(x) - w // 2 - 5
+                    text_y = int(y) - 30
+
+                    # Outline putih
                     cv2.putText(img, label, (text_x, text_y),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 4)
 
-                    # Gambar teks utama hitam (di atas outline)
+                    # Teks utama hitam
                     cv2.putText(img, label, (text_x, text_y),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
         except:
