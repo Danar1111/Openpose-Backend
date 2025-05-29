@@ -78,9 +78,9 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     skor_text = f"skor: {mapping[key]}"
 
                     # Ukuran lingkaran
-                    radius = 25
-                    font_scale_sudut = radius / 80
-                    font_scale_skor = radius / 80
+                    radius = 10
+                    font_scale_sudut = radius / 40
+                    font_scale_skor = radius / 40
 
                     thickness = 1
 
