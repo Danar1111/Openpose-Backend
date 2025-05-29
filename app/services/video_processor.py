@@ -39,8 +39,6 @@ def process_video(job_folder, job_id):
             original_jpg = os.path.basename(best_frame["gambar_path"])
             rendered_name = original_jpg.replace(".jpg", "_rendered.png")
             image_path = os.path.join(output_image_folder, rendered_name)
-            print(image_path)
-            print(original_frame)
 
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
                 with open(image_path, 'rb') as f:
