@@ -63,7 +63,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
                 cv2.circle(overlay, (int(x), int(y)), 25, color, -1)
 
-                alpha = 0.4
+                alpha = 0.6
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
                 if sudut_val is not None:
