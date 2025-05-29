@@ -72,18 +72,30 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 # Ambil nilai sudut tubuhnya
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
+                
                 if sudut_val is not None:
-                    label = f"{sudut_val:.0f}°"
+                    sudut_text = f"{sudut_val:.0f}°"
+                    skor_text = f"skor: {mapping[key]}"
 
-                    # Hitung ukuran teks untuk center di titik
-                    (text_w, text_h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
-                    text_x = int(x) - text_w // 2
-                    text_y = int(y) + text_h // 2
+                    # Ukuran teks
+                    (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)
 
-                    cv2.putText(img, label, (text_x, text_y),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 3)  # Outline putih
-                    cv2.putText(img, label, (text_x, text_y),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)        # Isi hitam
+                    # Posisi tengah teks 1 (sudut)
+                    x1 = int(x) - w1 // 2
+                    y1 = int(y)
+
+                    # Posisi teks 2 (skor) tepat di bawahnya
+                    x2 = int(x) - w2 // 2
+                    y2 = int(y) + h1 + 5
+
+                    # Sudut
+                    cv2.putText(img, sudut_text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                    cv2.putText(img, sudut_text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+
+                    # Skor
+                    cv2.putText(img, skor_text, (x2, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 2)
+                    cv2.putText(img, skor_text, (x2, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
         except:
             continue
