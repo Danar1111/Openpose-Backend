@@ -73,34 +73,19 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 # Ambil nilai sudut tubuhnya
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
 
-                if sudut_val is not None:
-                    sudut_text = f"{sudut_val:.1f}"
-                    skor_text = f"skor: {mapping[key]}"
+                for key, index in point_mapping.items():
+                    try:
+                        x, y, conf = keypoints[0][index]
+                        if conf > 0.1:
+                            color = get_color_by_score(mapping[key])
+                            overlay = img.copy()
+                            cv2.circle(overlay, (int(x), int(y)), 25, color, -1)
+                            img = cv2.addWeighted(overlay, 0.4, img, 0.6, 0)
 
-                    radius = 25
-                    font_scale_sudut = radius / 30
-                    font_scale_skor = radius / 38
-                    thickness = 2
-
-                    # Hitung ukuran teks
-                    (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, thickness)
-                    (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, thickness)
-
-                    # Sudut di tengah lingkaran
-                    x1 = int(x) - w1 // 2
-                    y1 = int(y) + h1 // 4
-
-                    # Skor di bawah lingkaran
-                    x2 = int(x) - w2 // 2
-                    y2 = int(y) + radius + h2 + 4
-
-                    # Tampilkan sudut di tengah lingkaran
-                    cv2.putText(img, sudut_text, (x1, y1),
-                                cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, (0, 0, 0), thickness)
-
-                    # Tampilkan skor di bawah
-                    cv2.putText(img, skor_text, (x2, y2),
-                                cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, (0, 0, 0), thickness)
+                            cv2.putText(img, f"{mapping[key]}", (int(x) + 30, int(y) - 10),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                    except:
+                        continue
 
         except:
             continue
