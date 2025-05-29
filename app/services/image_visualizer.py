@@ -74,23 +74,33 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
 
                 if sudut_val is not None:
-                    sudut_text = f"{sudut_val:.1f}°"
+                    sudut_text = f"{sudut_val:.1f} deg"
                     skor_text = f"skor: {mapping[key]}"
 
+                    # Ukuran lingkaran → jadi acuan font
+                    radius = 25
+                    font_scale_sudut = radius / 40    # misal 0.6
+                    font_scale_skor = radius / 55     # lebih kecil
+
+                    thickness = 2
+
                     # Ukuran teks
-                    (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-                    (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)
+                    (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, thickness)
+                    (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, thickness)
 
-                    # Posisi tengah teks 1 (sudut)
                     x1 = int(x) - w1 // 2
-                    y1 = int(y)
+                    y1 = int(y) - 5
 
-                    # Posisi teks 2 (skor) tepat di bawahnya
                     x2 = int(x) - w2 // 2
-                    y2 = int(y) + h1 + 5
+                    y2 = int(y) + h2 + 5
 
-                    cv2.putText(img, sudut_text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-                    cv2.putText(img, skor_text, (x2, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                    # Sudut (tebal)
+                    cv2.putText(img, sudut_text, (x1, y1),
+                                cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, (0, 0, 0), thickness)
+                    
+                    # Skor (tebal)
+                    cv2.putText(img, skor_text, (x2, y2),
+                                cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, (0, 0, 0), thickness)
 
         except:
             continue
