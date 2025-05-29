@@ -91,7 +91,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         }.get(label, (255, 255, 255))
 
     # === Kotak kecil di kanan atas (lebih kecil dari sebelumnya)
-    badge_x = img.shape[1] - 160
+    badge_x = 10
     badge_y = 10
     badge_w = 150
     badge_h = 40
