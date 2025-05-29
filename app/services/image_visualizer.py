@@ -69,8 +69,8 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 if sudut_val is not None:
                     label = f"{sudut_val:.1f} deg"
 
-                    text_x = int(x) + 30
-                    text_y = int(y) - 10
+                    text_x = int(x) - 10
+                    text_y = int(y) - 30
 
                     # Gambar outline putih (lebih tebal)
                     cv2.putText(img, label, (text_x, text_y),
