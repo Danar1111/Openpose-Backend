@@ -38,12 +38,12 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     mapping = {
-        "sudut_lutut": hasil_prediksi.get("skor_lutut_reba", 0),
-        "sudut_siku": hasil_prediksi.get("skor_siku_reba", 0),
-        "sudut_leher": hasil_prediksi.get("skor_leher_reba", 0),
-        "sudut_paha_punggung": hasil_prediksi.get("skor_trunk_reba", 0),
-        "sudut_pergelangan": hasil_prediksi.get("skor_pergelangan_rula", 0),
-        "sudut_bahu": hasil_prediksi.get("skor_bahu_rula", 0),
+        "sudut_lutut": hasil_prediksi.get("reba_leg_score", 0),
+        "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
+        "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
+        "sudut_paha_punggung": hasil_prediksi.get("reba_trunk_score", 0),
+        "sudut_pergelangan": hasil_prediksi.get("rula_wrist_score", 0),
+        "sudut_bahu": hasil_prediksi.get("rula_upper_arm_score", 0),
     }
 
     point_mapping = {
@@ -60,7 +60,6 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
             x, y, conf = keypoints[0][index]
             if conf > 0.1:
                 color = get_color_by_score(mapping[key])
-                print(color)
 
                 # Buat overlay (supaya bisa alpha blending)
                 overlay = img.copy()
