@@ -104,7 +104,6 @@ def run_openpose_on_folder(image_folder, output_json_folder, output_image_folder
         "--model_folder", model_folder,
         "--hand", "True",
         "--display", "0",
-        "--render_pose", "0",
         "--disable_multi_thread"
     ]
 
