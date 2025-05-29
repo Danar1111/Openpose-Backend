@@ -75,13 +75,12 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         except:
             continue
     
-    # Ambil skor akhir dan label
+    # === Skor & label
     rula_final = hasil_prediksi.get("rula_final_score", 0)
     reba_final = hasil_prediksi.get("reba_final_score", 0)
     rula_label = get_risk_label(rula_final)
     reba_label = get_risk_label(reba_final)
 
-    # === Mapping warna label
     def label_color(label):
         return {
             "Negligible": (144, 238, 144),
@@ -91,20 +90,22 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
             "Very High": (0, 0, 255)
         }.get(label, (255, 255, 255))
 
-    # === Gambar box kecil di pojok kanan atas
-    badge_padding = 10
-    badge_x = img.shape[1] - 280
+    # === Kotak kecil di kanan atas (lebih kecil dari sebelumnya)
+    badge_x = img.shape[1] - 160
     badge_y = 10
-    badge_w = 270
-    badge_h = 60
+    badge_w = 150
+    badge_h = 40
 
     cv2.rectangle(img, (badge_x, badge_y), (badge_x + badge_w, badge_y + badge_h), (50, 50, 50), -1)
 
-    # === Tambah teks RULA dan REBA
-    cv2.putText(img, f"RULA: {rula_final}", (badge_x + 10, badge_y + 25),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, label_color(rula_label), 2)
-    cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 50),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, label_color(reba_label), 2)
+    # === Tulisan kecil, tapi tetap jelas
+    font_scale = 0.5
+    font_thickness = 1
+
+    cv2.putText(img, f"RULA: {rula_final}", (badge_x + 10, badge_y + 15),
+                cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(rula_label), font_thickness)
+    cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 32),
+                cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
 
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
