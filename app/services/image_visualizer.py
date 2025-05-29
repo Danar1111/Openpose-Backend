@@ -74,7 +74,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
 
                 if sudut_val is not None:
-                    sudut_text = f"{sudut_val:.0f}°"
+                    sudut_text = f"{sudut_val:.1f}°"
                     skor_text = f"skor: {mapping[key]}"
 
                     # Ukuran teks
@@ -89,12 +89,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     x2 = int(x) - w2 // 2
                     y2 = int(y) + h1 + 5
 
-                    # Sudut
-                    cv2.putText(img, sudut_text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                     cv2.putText(img, sudut_text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-
-                    # Skor
-                    cv2.putText(img, skor_text, (x2, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 2)
                     cv2.putText(img, skor_text, (x2, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
         except:
