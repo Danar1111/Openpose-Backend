@@ -3,34 +3,93 @@
 <head>
   <title>Realtime Ergonomic Posture Detection</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1, h2 {
+      color: #2563eb;
+    }
+    label {
+      margin-right: 10px;
+    }
+    select, button {
+      padding: 6px 12px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    #status {
+      font-weight: bold;
+      color: #10b981;
+    }
+    .section {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .summary-line {
+      margin: 5px 0;
+      padding: 3px 0;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #0f172a;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background-color: #f1f5f9;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      border-left: 4px solid #3b82f6;
+    }
+  </style>
 </head>
 <body>
   <h1>Posture Detection Client</h1>
 
-  <label for="cameraSelect">Pilih Kamera:</label>
-  <select id="cameraSelect"></select>
-  <label for="intervalSelect">Interval (ms):</label>
-  <select id="intervalSelect">
-    <option value="1000">1 detik</option>
-    <option value="3000">3 detik</option>
-    <option value="5000" selected>5 detik</option>
-    <option value="10000">10 detik</option>
-  </select>
+  <div class="section">
+    <label for="cameraSelect">Pilih Kamera:</label>
+    <select id="cameraSelect"></select>
+    <label for="intervalSelect">Interval (ms):</label>
+    <select id="intervalSelect">
+      <option value="1000">1 detik</option>
+      <option value="3000">3 detik</option>
+      <option value="5000" selected>5 detik</option>
+      <option value="10000">10 detik</option>
+    </select>
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn">Disconnect</button>
+    <p id="status">Status: Disconnected</p>
+  </div>
 
-  <br><br>
+  <div class="section">
+    <h2>SID</h2>
+    <div id="resultSID" class="summary-line">Belum ada data...</div>
 
-  <button id="connectBtn">Connect</button>
-  <button id="disconnectBtn">Disconnect</button>
+    <h2>Hasil Deteksi (Realtime):</h2>
+    <pre id="resultDisplay">Belum ada data...</pre>
 
-  <p id="status">Status: Disconnected</p>
-  <video id="video" width="320" height="240" autoplay></video>
-
-  <h2>SID</h2>
-  <pre id="resultSID">Belum ada data...</pre>
-  <h2>Hasil Deteksi (Realtime):</h2>
-  <pre id="resultDisplay">Belum ada data...</pre>
-  <h2>Hasil Summary:</h2>
-  <pre id="summaryDisplay">Belum ada summary...</pre>
+    <h2>Hasil Summary:</h2>
+    <pre id="summaryDisplay">Belum ada summary...</pre>
+  </div>
 
   <script>
     let socket = null;
