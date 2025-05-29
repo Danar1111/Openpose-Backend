@@ -70,7 +70,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     label = f"{sudut_val:.1f} deg"
 
                     # Ukuran teks
-                    (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
+                    (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
 
                     # Geser sedikit ke kiri dan atas lingkaran
                     text_x = int(x) - w // 2 - 5
