@@ -4,9 +4,7 @@ import numpy as np
 from datetime import datetime
 
 def get_color_by_score(score):
-    if score == 0:
-        return (144, 238, 144)  # Light green
-    elif score == 1:
+    if score == 1:
         return (0, 255, 0)      # Green
     elif score == 2:
         return (173, 255, 47)   # Yellow-green
@@ -38,10 +36,10 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     mapping = {
-        "sudut_lutut": hasil_prediksi.get("reba_leg_score", 0),
+        "sudut_lutut": hasil_prediksi.get("rula_leg_score", 0),
         "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
         "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
-        "sudut_punggung": hasil_prediksi.get("reba_trunk_score", 0),
+        "sudut_punggung": hasil_prediksi.get("rula_trunk_score", 0),
         "sudut_pergelangan": hasil_prediksi.get("rula_wrist_score", 0),
         "sudut_bahu": hasil_prediksi.get("rula_upper_arm_score", 0),
     }
@@ -69,7 +67,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
                 if sudut_val is not None:
-                    label = f"{sudut_val:.1f}"
+                    label = f"{sudut_val:.1f} deg"
 
                     text_x = int(x) + 30
                     text_y = int(y) - 10
@@ -115,6 +113,36 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(rula_label), font_thickness)
     cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 32),
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
+
+    # === LEGEND SKOR ===
+    legend_x = 10
+    legend_y = img.shape[0] - 155
+    spacing = 22
+    radius = 8
+
+    score_labels = [
+        (1, "Skor 1 - Baik"),
+        (2, "Skor 2 - Cukup"),
+        (3, "Skor 3 - Perlu Diperhatikan"),
+        (4, "Skor 4 - Berisiko"),
+        (5, "Skor 5 - Tinggi"),
+        (6, "Skor 6 - Sangat Tinggi"),
+        (7, "Skor 7+ - Bahaya"),
+    ]
+
+    # Kotak latar belakang
+    cv2.rectangle(img, (legend_x - 5, legend_y - 10),
+                (legend_x + 230, legend_y + spacing * len(score_labels)),
+                (30, 30, 30), -1)
+
+    for i, (score, desc) in enumerate(score_labels):
+        cy = legend_y + i * spacing
+        color = get_color_by_score(score)
+        # Lingkaran warna
+        cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
+        # Teks deskripsi
+        cv2.putText(img, desc, (legend_x + 2 * radius + 8, cy + 5),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
 
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
