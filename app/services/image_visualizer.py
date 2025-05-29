@@ -81,7 +81,9 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     text_y = int(y) + text_h // 2
 
                     cv2.putText(img, label, (text_x, text_y),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 3)  # Outline putih
+                    cv2.putText(img, label, (text_x, text_y),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)        # Isi hitam
 
         except:
             continue
