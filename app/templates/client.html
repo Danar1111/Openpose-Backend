@@ -312,6 +312,7 @@
 
 			`Ringkasan REBA: ${s.reba_summary}\n` +
 			`Ringkasan RULA: ${s.rula_summary}`;
+			renderAngleGrid(result.details, result.default_value_flags);
 		});
 
 		function renderSummaryToText(s) {
@@ -377,7 +378,6 @@
         socket.disconnect();
       }
     };
-	renderAngleGrid(result.details, result.default_value_flags);
   </script>
 </body>
 </html>
