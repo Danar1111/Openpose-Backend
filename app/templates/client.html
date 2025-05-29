@@ -81,19 +81,42 @@
       font-size: 12px;
       color: #92400e;
     }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 8px;
-      margin-top: 15px;
+    .group-title {
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #1e40af;
     }
-    .result-box {
+    .group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .value-box {
       background-color: #f1f5f9;
-      padding: 8px;
       border-radius: 6px;
-      border-left: 4px solid #2563eb;
-      font-size: 13px;
+      padding: 8px 12px;
+      flex: 1 1 150px;
+      box-shadow: 0 0 0 2px #2563eb inset;
     }
+    .feedback-box {
+      background-color: #f1f5f9;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 0 2px #2563eb inset;
+      max-width: 100%;
+    }
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		background-color: #f1f5f9;
+		padding: 15px;
+		border-radius: 8px;
+		font-size: 14px;
+		border-left: 4px solid #3b82f6;
+	}
   </style>
 </head>
 <body>
@@ -122,8 +145,18 @@
     <div id="resultSID" class="summary-line">Belum ada data...</div>
 
     <h2>Hasil Deteksi (Realtime):</h2>
-    <div id="resultBoxes" class="grid-container"></div>
+    <div id="feedbackBox" class="feedback-box">Belum ada feedback...</div>
 
+    <div class="group-title">REBA</div>
+    <div id="rebaGroup" class="group"></div>
+
+    <div class="group-title">RULA</div>
+    <div id="rulaGroup" class="group"></div>
+
+    <div class="group-title">Adjustment</div>
+    <div id="adjustGroup" class="group"></div>
+
+    <div class="group-title">Sudut</div>
     <div id="angleGrid" class="grid"></div>
 
     <h2>Hasil Summary:</h2>
