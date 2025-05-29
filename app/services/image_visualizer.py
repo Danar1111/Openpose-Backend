@@ -79,10 +79,10 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
                     # Ukuran lingkaran → jadi acuan font
                     radius = 25
-                    font_scale_sudut = radius / 40    # misal 0.6
-                    font_scale_skor = radius / 55     # lebih kecil
+                    font_scale_sudut = radius / 55    # misal 0.6
+                    font_scale_skor = radius / 70     # lebih kecil
 
-                    thickness = 2
+                    thickness = 1
 
                     # Ukuran teks
                     (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, thickness)
