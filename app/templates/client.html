@@ -246,6 +246,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     let socket = null;
     let captureInterval = null;
@@ -262,13 +263,20 @@
 	const adjustGroup = document.getElementById("adjustGroup");
 	const feedbackBox = document.getElementById("feedbackBox");
 
-	function copyText(elementId) {
-		const el = document.getElementById(elementId);
-		const text = el.innerText;
+	function copyText(id) {
+		const text = document.getElementById(id).innerText;
 		navigator.clipboard.writeText(text).then(() => {
-			alert("Teks disalin!");
-		}).catch(err => {
-			console.error("Gagal menyalin teks:", err);
+			Swal.fire({
+			title: 'Teks disalin!',
+			toast: true,
+			position: 'top-end',
+			icon: 'success',
+			showConfirmButton: false,
+			timer: 1500,
+			timerProgressBar: true,
+			background: '#1f2937',
+			color: '#ffffff',
+			});
 		});
 	}
 
