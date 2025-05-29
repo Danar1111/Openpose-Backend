@@ -100,6 +100,19 @@
       flex: 1 1 150px;
       box-shadow: 0 0 0 2px #2563eb inset;
     }
+	.box-label {
+		font-size: 13px;
+		font-weight: 600;
+		text-align: center;
+		color: #1e293b;
+	}
+
+	.box-value {
+		font-size: 20px;
+		font-weight: bold;
+		margin-top: 4px;
+		color: #0f172a;
+	}
     .feedback-box {
       background-color: #f1f5f9;
       border-radius: 6px;
@@ -223,7 +236,10 @@
 	function createBox(label, value) {
 		const div = document.createElement("div");
 		div.className = "value-box";
-		div.innerHTML = `<strong>${label}</strong><br>${value}`;
+		div.innerHTML = `
+			<div class="box-label">${label}</div>
+			<div class="box-value">${value}</div>
+		`;
 		return div;
 	}
 
