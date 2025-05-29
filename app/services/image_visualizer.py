@@ -61,35 +61,14 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
             if conf > 0.1:
                 color = get_color_by_score(mapping[key])
 
-                # Buat overlay (supaya bisa alpha blending)
                 overlay = img.copy()
 
-                # Gambar lingkaran isi penuh di overlay
                 cv2.circle(overlay, (int(x), int(y)), 25, color, -1)
 
-                # Gabungkan overlay dengan gambar asli (alpha blending → transparansi)
                 alpha = 0.4
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-                # Ambil nilai sudut tubuhnya
-                sudut_val = hasil_prediksi.get("details", {}).get(key, None)
-
-                for key, index in point_mapping.items():
-                    try:
-                        x, y, conf = keypoints[0][index]
-                        if conf > 0.1:
-                            color = get_color_by_score(mapping[key])
-
-                            overlay = img.copy()
-
-                            cv2.circle(overlay, (int(x), int(y)), 25, color, -1)
-
-                            alpha = 0.4
-                            img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
-                            cv2.putText(img, f"{mapping[key]}", (int(x) + 30, int(y) - 10),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
-                    except:
-                        continue
-
+                cv2.putText(img, f"{mapping[key]}", (int(x) + 30, int(y) - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
         except:
             continue
     
