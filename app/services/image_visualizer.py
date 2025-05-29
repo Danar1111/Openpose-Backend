@@ -74,7 +74,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
 
                 if sudut_val is not None:
-                    sudut_text = f"{sudut_val:.1f} deg"
+                    sudut_text = f"{sudut_val:.1f}\""
                     skor_text = f"skor: {mapping[key]}"
 
                     # Ukuran lingkaran → jadi acuan font
