@@ -5,11 +5,21 @@ from datetime import datetime
 
 def get_color_by_score(score):
     if score == 0:
-        return (0, 255, 0)  # Hijau
+        return (144, 238, 144)  # Light green
     elif score == 1:
-        return (0, 255, 255)  # Kuning
-    else:
-        return (0, 0, 255)  # Merah
+        return (0, 255, 0)      # Green
+    elif score == 2:
+        return (173, 255, 47)   # Yellow-green
+    elif score == 3:
+        return (0, 255, 255)    # Yellow
+    elif score == 4:
+        return (0, 165, 255)    # Orange
+    elif score == 5:
+        return (0, 140, 255)    # Darker Orange
+    elif score == 6:
+        return (0, 69, 255)     # Orange-red
+    else:  # score >= 7
+        return (0, 0, 255)      # Red
 
 def get_risk_label(score):
     if score <= 1:
@@ -50,6 +60,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
             x, y, conf = keypoints[0][index]
             if conf > 0.1:
                 color = get_color_by_score(mapping[key])
+                print(color)
 
                 # Buat overlay (supaya bisa alpha blending)
                 overlay = img.copy()
