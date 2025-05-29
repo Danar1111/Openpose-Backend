@@ -70,7 +70,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     label = f"{sudut_val:.1f} deg"
 
                     text_x = int(x) - w // 2
-                    text_y = int(y) - 30
+                    text_y = int(y) - radius - 5
 
                     # Gambar outline putih (lebih tebal)
                     cv2.putText(img, label, (text_x, text_y),
