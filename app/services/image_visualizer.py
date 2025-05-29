@@ -67,10 +67,10 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
                 if sudut_val is not None:
-                    label = f"{sudut_val:.1f} deg"
+                    label = f"{sudut_val:.1f}d"
 
                     # Ukuran teks
-                    (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
+                    (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
 
                     # Geser sedikit ke kiri dan atas lingkaran
                     text_x = int(x) - w // 2 - 5
