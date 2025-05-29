@@ -75,22 +75,36 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         except:
             continue
     
-    # Ambil skor akhir RULA dan REBA
+    # Ambil skor akhir dan label
     rula_final = hasil_prediksi.get("rula_final_score", 0)
     reba_final = hasil_prediksi.get("reba_final_score", 0)
     rula_label = get_risk_label(rula_final)
     reba_label = get_risk_label(reba_final)
 
-    # Tambahkan overlay header abu transparan
-    overlay = img.copy()
-    cv2.rectangle(overlay, (0, 0), (img.shape[1], 60), (50, 50, 50), -1)
-    img = cv2.addWeighted(overlay, 0.6, img, 0.4, 0)
+    # === Mapping warna label
+    def label_color(label):
+        return {
+            "Negligible": (144, 238, 144),
+            "Low": (0, 255, 0),
+            "Medium": (0, 255, 255),
+            "High": (0, 165, 255),
+            "Very High": (0, 0, 255)
+        }.get(label, (255, 255, 255))
 
-    # Tampilkan skor RULA & REBA di bagian atas
-    cv2.putText(img, f"RULA: {rula_final} ({rula_label})", (20, 40),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
-    cv2.putText(img, f"REBA: {reba_final} ({reba_label})", (300, 40),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
+    # === Gambar box kecil di pojok kanan atas
+    badge_padding = 10
+    badge_x = img.shape[1] - 280
+    badge_y = 10
+    badge_w = 270
+    badge_h = 60
+
+    cv2.rectangle(img, (badge_x, badge_y), (badge_x + badge_w, badge_y + badge_h), (50, 50, 50), -1)
+
+    # === Tambah teks RULA dan REBA
+    cv2.putText(img, f"RULA: {rula_final}", (badge_x + 10, badge_y + 25),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, label_color(rula_label), 2)
+    cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, label_color(reba_label), 2)
 
     folder_path = os.path.join("output_images", datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(folder_path, exist_ok=True)
