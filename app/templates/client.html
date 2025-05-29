@@ -172,6 +172,9 @@
 		font-size: 16px;
 		cursor: pointer;
 	}
+	button svg:hover {
+		fill: #1d4ed8;
+	}
   </style>
 </head>
 <body>
@@ -207,7 +210,11 @@
       <div class="section">
         <div style="display: flex; align-items: center; gap: 8px;">
 			<h2>SID</h2>
-			<button onclick="copyText('resultSID')" title="Copy SID">📋</button>
+			<button onclick="copyText('resultSID')" title="Copy SID" style="background: none; border: none; cursor: pointer;">
+				<svg xmlns="http://www.w3.org/2000/svg" height="20" fill="#2563eb" viewBox="0 0 24 24">
+					<path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v16h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 18H8V7h11v16Z"/>
+				</svg>
+			</button>
 		</div>
 		<div id="resultSID" class="summary-line">Belum ada data...</div>
 
@@ -228,7 +235,11 @@
 
         <div style="display: flex; align-items: center; gap: 8px;">
 			<h2>Hasil Summary:</h2>
-			<button onclick="copyText('summaryDisplay')" title="Copy Summary">📋</button>
+			<button onclick="copyText('summaryDisplay')" title="Copy Summary" style="background: none; border: none; cursor: pointer;">
+				<svg xmlns="http://www.w3.org/2000/svg" height="20" fill="#2563eb" viewBox="0 0 24 24">
+					<path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v16h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 18H8V7h11v16Z"/>
+				</svg>
+			</button>
 		</div>
         <pre id="summaryDisplay">Belum ada summary...</pre>
       </div>
