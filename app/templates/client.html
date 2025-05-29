@@ -130,6 +130,23 @@
 	.result-panel {
 		flex: 2 1 600px;
 	}
+	.top-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 10px;
+	}
+
+	.top-bar label {
+		font-weight: 600;
+	}
+
+	.status-text {
+		margin-top: 5px;
+		font-weight: bold;
+		color: #10b981;
+	}
   </style>
 </head>
 <body>
@@ -138,22 +155,27 @@
   <div class="flex-container">
     <div class="video-preview">
       <div class="section">
-        <label for="cameraSelect">Pilih Kamera:</label>
-        <select id="cameraSelect"></select>
-        <label for="intervalSelect">Interval (ms):</label>
-        <select id="intervalSelect">
-          <option value="1000">1 detik</option>
-          <option value="3000">3 detik</option>
-          <option value="5000" selected>5 detik</option>
-          <option value="10000">10 detik</option>
-        </select>
-        <button id="connectBtn">Connect</button>
-        <button id="disconnectBtn">Disconnect</button>
-        <p id="status">Status: Disconnected</p>
+		<div class="top-bar">
+			<label for="cameraSelect">Pilih Kamera:</label>
+			<select id="cameraSelect"></select>
 
-        <h2>Preview Kamera</h2>
-        <video id="video" width="480" height="360" autoplay></video>
-      </div>
+			<label for="intervalSelect">Interval (ms):</label>
+			<select id="intervalSelect">
+			<option value="1000">1 detik</option>
+			<option value="3000">3 detik</option>
+			<option value="5000" selected>5 detik</option>
+			<option value="10000">10 detik</option>
+			</select>
+
+			<button id="connectBtn">Connect</button>
+			<button id="disconnectBtn">Disconnect</button>
+		</div>
+
+		<p id="status" class="status-text">Status: Disconnected</p>
+
+		<h2>Preview Kamera</h2>
+		<video id="video" width="480" height="360" autoplay></video>
+		</div>
     </div>
 
     <div class="result-panel">
