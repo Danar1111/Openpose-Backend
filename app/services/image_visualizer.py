@@ -70,8 +70,17 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
                 if sudut_val is not None:
                     label = f"{sudut_val:.1f}"
-                    cv2.putText(img, label, (int(x) + 30, int(y) - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
+
+                    text_x = int(x) + 30
+                    text_y = int(y) - 10
+
+                    # Gambar outline putih (lebih tebal)
+                    cv2.putText(img, label, (text_x, text_y),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 4)
+
+                    # Gambar teks utama hitam (di atas outline)
+                    cv2.putText(img, label, (text_x, text_y),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
         except:
             continue
     
