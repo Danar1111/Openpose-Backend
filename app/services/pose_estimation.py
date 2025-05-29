@@ -92,7 +92,7 @@ def process_pose_from_bytes(image_bytes):
 
     return hasil_prediksi
 
-def run_openpose_on_folder(image_folder, output_json_folder):
+def run_openpose_on_folder(image_folder, output_json_folder, output_image_folder):
     openpose_bin_path = "/root/openpose/build/examples/openpose/openpose.bin"
     model_folder = "/root/openpose/models"
 
