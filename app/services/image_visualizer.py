@@ -89,10 +89,10 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, thickness)
 
                     x1 = int(x) - w1 // 2
-                    y1 = int(y) - 5
+                    y1 = int(y) + h1 // 4
 
-                    x2 = int(x) - w2 // 2
-                    y2 = int(y) + h2 + 5
+                    x2 = int(x) + radius + 4
+                    y2 = int(y) + radius // 2
 
                     # Sudut (tebal)
                     cv2.putText(img, sudut_text, (x1, y1),
