@@ -77,14 +77,12 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     sudut_text = f"{sudut_val:.1f}"
                     skor_text = f"skor: {mapping[key]}"
 
-                    # Ukuran lingkaran
                     radius = 25
                     font_scale_sudut = radius / 30
-                    font_scale_skor = radius / 35
-
+                    font_scale_skor = radius / 38
                     thickness = 2
 
-                    # Ukuran teks
+                    # Hitung ukuran teks
                     (w1, h1), _ = cv2.getTextSize(sudut_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, thickness)
                     (w2, h2), _ = cv2.getTextSize(skor_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, thickness)
 
@@ -92,15 +90,15 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                     x1 = int(x) - w1 // 2
                     y1 = int(y) + h1 // 4
 
-                    # Skor di atas lingkaran
+                    # Skor di bawah lingkaran
                     x2 = int(x) - w2 // 2
-                    y2 = int(y) - radius - 5
+                    y2 = int(y) + radius + h2 + 4
 
-                    # Sudut (di tengah lingkaran)
+                    # Tampilkan sudut di tengah lingkaran
                     cv2.putText(img, sudut_text, (x1, y1),
                                 cv2.FONT_HERSHEY_SIMPLEX, font_scale_sudut, (0, 0, 0), thickness)
 
-                    # Skor (di atas lingkaran)
+                    # Tampilkan skor di bawah
                     cv2.putText(img, skor_text, (x2, y2),
                                 cv2.FONT_HERSHEY_SIMPLEX, font_scale_skor, (0, 0, 0), thickness)
 
