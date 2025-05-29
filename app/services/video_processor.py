@@ -13,7 +13,9 @@ def process_video(job_folder, job_id):
 
     frames_folder = os.path.join(job_folder, "frames")
     json_folder = os.path.join(job_folder, "json")
+    output_image_folder = os.path.join(job_folder, "rendered")
 
+    os.makedirs(output_image_folder, exist_ok=True)
     os.makedirs(frames_folder, exist_ok=True)
     os.makedirs(json_folder, exist_ok=True)
 
@@ -24,7 +26,7 @@ def process_video(job_folder, job_id):
             video_path = flip_video(video_path)
 
         sample_video_to_folder(video_path, frames_folder)
-        run_openpose_on_folder(frames_folder, json_folder)
+        run_openpose_on_folder(frames_folder, json_folder, output_image_folder)
 
         sampled_results = process_openpose_results(json_folder, frames_folder)
         final_result = summarize_results(sampled_results)
@@ -34,7 +36,8 @@ def process_video(job_folder, job_id):
             best_frame = ranked[0]
 
             keypoints_path = best_frame.get("gambar_path", "").replace("frames/", "json/").replace(".jpg", "_keypoints.json")
-            image_path = best_frame.get("gambar_path")
+            original_frame = os.path.basename(best_frame["gambar_path"])
+            image_path = os.path.join(output_image_folder, original_frame)
 
             if os.path.exists(image_path) and os.path.exists(keypoints_path):
                 with open(image_path, 'rb') as f:

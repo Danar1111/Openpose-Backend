@@ -100,6 +100,7 @@ def run_openpose_on_folder(image_folder, output_json_folder):
         openpose_bin_path,
         "--image_dir", image_folder,
         "--write_json", output_json_folder,
+        "--write_images", output_image_folder,
         "--model_folder", model_folder,
         "--hand", "True",
         "--display", "0",
