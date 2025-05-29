@@ -1,4 +1,4 @@
-sudo apt-get update -y
+sudo apt-get update -y && sudo apt-get install pip -y
 
 sudo apt-get -y --no-install-recommends upgrade && \
 	apt-get install -y --no-install-recommends \
@@ -28,8 +28,7 @@ sudo apt-get -y --no-install-recommends upgrade && \
 	libcanberra-gtk-module \
 	libopencv-dev \
 	unzip \
-	nano \
-	pip
+	nano
 
 python3 -m pip install \
 	numpy \
