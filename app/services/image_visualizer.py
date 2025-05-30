@@ -35,6 +35,10 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
+    blank_space_width = 180
+    blank = np.ones((img.shape[0], blank_space_width, 3), dtype=np.uint8) * 0
+    img = np.hstack((blank, img))
+
     mapping = {
         "sudut_lutut": hasil_prediksi.get("rula_leg_score", 0),
         "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
@@ -102,7 +106,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         }.get(label, (255, 255, 255))
 
     # === Kotak kecil di kanan atas (lebih kecil dari sebelumnya)
-    badge_x = 10
+    badge_x = 10 + blank_space_width
     badge_y = 10
     badge_w = 150
     badge_h = 40
@@ -119,7 +123,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
 
     # === LEGEND SKOR ===
-    legend_x = 10
+    legend_x = 10 + blank_space_width
     spacing = 20
     radius = 6
 
