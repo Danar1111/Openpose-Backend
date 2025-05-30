@@ -88,7 +88,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 cv2.ellipse(overlay, center, axes, 0, 90, 270, rula_color, -1)
 
                 # Draw REBA half (right)
-                cv2.ellipse(overlay, center, axes, 0, 270, 90, reba_color, -1)
+                cv2.ellipse(overlay, center, axes, 0, -90, 90, reba_color, -1)
 
                 alpha = 0.6
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
