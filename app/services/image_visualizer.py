@@ -49,12 +49,12 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     }
 
     mapping_reba = {
-        "sudut_lutut": hasil_prediksi.get("rula_leg_score", 0),
-        "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
-        "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
-        "sudut_punggung": hasil_prediksi.get("rula_trunk_score", 0),
-        "sudut_pergelangan": hasil_prediksi.get("rula_wrist_score", 0),
-        "sudut_bahu": hasil_prediksi.get("rula_upper_arm_score", 0),
+        "sudut_lutut": hasil_prediksi.get("reba_leg_score", 0),
+        "sudut_siku": hasil_prediksi.get("reba_lower_arm_score", 0),
+        "sudut_leher": hasil_prediksi.get("reba_neck_score", 0),
+        "sudut_punggung": hasil_prediksi.get("reba_trunk_score", 0),
+        "sudut_pergelangan": hasil_prediksi.get("reba_wrist_score", 0),
+        "sudut_bahu": hasil_prediksi.get("reba_upper_arm_score", 0),
     }
 
     point_mapping = {
