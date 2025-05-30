@@ -154,12 +154,12 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
     # === Kotak latar RULA
     cv2.rectangle(img, (legend_x - 5, legend_y_start - 5),
-                (legend_x + 130, legend_y_start + rula_block_height),
+                (legend_x + 135, legend_y_start + rula_block_height),
                 (30, 30, 30), -1)
 
     # === Kotak latar REBA
     cv2.rectangle(img, (legend_x - 5, legend_y_start + rula_block_height + 5),
-                (legend_x + 130, legend_y_start + rula_block_height + 5 + reba_block_height),
+                (legend_x + 135, legend_y_start + rula_block_height + 5 + reba_block_height),
                 (30, 30, 30), -1)
 
     # === Judul RULA
