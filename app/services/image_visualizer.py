@@ -35,8 +35,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    scale_factor = img.shape[0] / 720
-    blank_space_width = int(180 * scale_factor)
+    blank_space_width = 180
     blank = np.ones((img.shape[0], blank_space_width, 3), dtype=np.uint8) * 255
     img = np.hstack((blank, img))
 
@@ -110,14 +109,14 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     # === Kotak kecil di kanan atas (lebih kecil dari sebelumnya)
     badge_x = 10
     badge_y = 10
-    badge_w = int(150 * scale_factor)
-    badge_h = int(40 * scale_factor)
+    badge_w = 150
+    badge_h = 40
 
     cv2.rectangle(img, (badge_x, badge_y), (badge_x + badge_w, badge_y + badge_h), (50, 50, 50), -1)
 
     # === Tulisan kecil, tapi tetap jelas
-    font_scale = 0.5 * scale_factor
-    font_thickness = max(1, int(1 * scale_factor))
+    font_scale = 0.5
+    font_thickness = 1
 
     cv2.putText(img, f"RULA: {rula_final}", (badge_x + 10, badge_y + 15),
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(rula_label), font_thickness)
@@ -126,8 +125,8 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
     # === LEGEND SKOR ===
     legend_x = 15
-    radius = max(4, int(6 * scale_factor))
-    spacing = int(20 * scale_factor)
+    spacing = 20
+    radius = 6
 
     rula_labels = [
         (1, "Acceptable"),
