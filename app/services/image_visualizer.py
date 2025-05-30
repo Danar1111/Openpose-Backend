@@ -126,18 +126,24 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     radius = 6
 
     rula_labels = [
-        (1, "1–2: Acceptable"),
-        (2, "3–4: Investigate"),
-        (3, "5–6: Change Soon"),
-        (4, "7: Implement Change"),
+        (1, "Acceptable"),
+        (2, "Acceptable"),
+        (3, "Investigate"),
+        (4, "Investigate"),
+        (5, "Change Soon"),
+        (6, "Change Soon"),
+        (7, "Implement Change"),
     ]
 
     reba_labels = [
-        (1, "1: Negligible"),
-        (2, "2–3: Low"),
-        (3, "4–7: Medium"),
-        (4, "8–10: High"),
-        (5, "11+: Very High"),
+        (1, "Negligible"),
+        (2, "Low"),
+        (3, "Low"),
+        (4, "Medium"),
+        (5, "Medium"),
+        (6, "Medium"),
+        (7, "Medium"),
+        (8, "High"),
     ]
 
     # Kotak latar belakang RULA
