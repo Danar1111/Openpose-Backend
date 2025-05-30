@@ -188,6 +188,28 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     cv2.rectangle(img, (legend_x - 5, legend_y_start + rula_block_height + 5),
                 (legend_x + 150, legend_y_start + rula_block_height + 5 + reba_block_height),
                 (30, 30, 30), -1)
+    
+    # === Penjelas Split RULA / REBA ===
+    example_center = (legend_x + 25, legend_y_start - 25)
+    radius = 12
+    axes = (radius, radius)
+
+    # Gunakan warna tengah (contoh saja: skor 3 untuk RULA dan 2 untuk REBA)
+    rula_example_color = get_color_by_score(3)
+    reba_example_color = get_color_by_score(2)
+
+    # Gambar lingkaran split
+    cv2.ellipse(img, example_center, axes, 0, 90, 270, rula_example_color, -1)   # kiri
+    cv2.ellipse(img, example_center, axes, 0, 270, 450, reba_example_color, -1)  # kanan
+
+    # Outline agar terlihat
+    cv2.ellipse(img, example_center, axes, 0, 0, 360, (0, 0, 0), 1)
+
+    # Tambahkan teks keterangan
+    cv2.putText(img, "Kiri: RULA", (example_center[0] + 20, example_center[1] - 5),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+    cv2.putText(img, "Kanan: REBA", (example_center[0] + 20, example_center[1] + 12),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
 
     # === Judul RULA
     cv2.putText(img, "RULA", (legend_x, legend_y_start + 15),
