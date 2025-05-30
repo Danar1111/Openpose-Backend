@@ -191,7 +191,8 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
     # === Contoh split RULA/REBA ===
     split_example_center = (legend_x + 20, legend_y_start - 30)
-    split_radius = 10
+    split_radius = 15
+    
     split_axes = (split_radius, split_radius)
 
     # Contoh warna (misal: skor 3 RULA = kuning, 2 REBA = hijau muda)
