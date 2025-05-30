@@ -36,7 +36,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     blank_space_width = 180
-    blank = np.ones((img.shape[0], blank_space_width, 3), dtype=np.uint8) * 0
+    blank = np.ones((img.shape[0], blank_space_width, 3), dtype=np.uint8) * 255
     img = np.hstack((blank, img))
 
     mapping = {
