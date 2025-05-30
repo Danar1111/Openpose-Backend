@@ -39,7 +39,16 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     blank = np.ones((img.shape[0], blank_space_width, 3), dtype=np.uint8) * 255
     img = np.hstack((blank, img))
 
-    mapping = {
+    mapping_rula = {
+        "sudut_lutut": hasil_prediksi.get("rula_leg_score", 0),
+        "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
+        "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
+        "sudut_punggung": hasil_prediksi.get("rula_trunk_score", 0),
+        "sudut_pergelangan": hasil_prediksi.get("rula_wrist_score", 0),
+        "sudut_bahu": hasil_prediksi.get("rula_upper_arm_score", 0),
+    }
+
+    mapping_reba = {
         "sudut_lutut": hasil_prediksi.get("rula_leg_score", 0),
         "sudut_siku": hasil_prediksi.get("rula_lower_arm_score", 0),
         "sudut_leher": hasil_prediksi.get("rula_neck_score", 0),
@@ -62,11 +71,24 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
             x, y, conf = keypoints[0][index]
             x += blank_space_width
             if conf > 0.1:
-                color = get_color_by_score(mapping[key])
-
                 overlay = img.copy()
 
-                cv2.circle(overlay, (int(x), int(y)), 25, color, -1)
+                rula_score = mapping_rula[key]
+                reba_score = mapping_reba[key]
+
+                rula_color = get_color_by_score(rula_score)
+                reba_color = get_color_by_score(reba_score)
+
+                # Split circle: left half (RULA), right half (REBA)
+                center = (int(x), int(y))
+                radius = 25
+                axes = (radius, radius)
+
+                # Draw RULA half (left)
+                cv2.ellipse(overlay, center, axes, 0, 90, 270, rula_color, -1)
+
+                # Draw REBA half (right)
+                cv2.ellipse(overlay, center, axes, 0, 270, 90, reba_color, -1)
 
                 alpha = 0.6
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
