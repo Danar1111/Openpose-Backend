@@ -78,7 +78,6 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
                 rula_color = get_color_by_score(rula_score)
                 reba_color = get_color_by_score(reba_score)
-                print(rula_color + " " + reba_color)
 
                 # Split circle: left half (RULA), right half (REBA)
                 center = (int(x), int(y))
