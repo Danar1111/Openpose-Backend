@@ -118,11 +118,9 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 32),
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
 
-   # === LEGEND SKOR ===
+    # === LEGEND SKOR ===
     legend_x = 10
-    legend_y_rula = img.shape[0] - 160
-    legend_y_reba = legend_y_rula + 90  # bawahnya RULA
-    spacing = 18
+    spacing = 20
     radius = 6
 
     rula_labels = [
@@ -146,35 +144,44 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
         (8, "High"),
     ]
 
-    # Kotak latar belakang RULA
-    cv2.rectangle(img, (legend_x - 5, legend_y_rula - 20),
-                (legend_x + 230, legend_y_rula + spacing * len(rula_labels)),
+    # Hitung tinggi masing-masing blok legend
+    rula_block_height = spacing * len(rula_labels) + 25
+    reba_block_height = spacing * len(reba_labels) + 25
+
+    # Total tinggi semua
+    total_legend_height = rula_block_height + reba_block_height + 10
+    legend_y_start = img.shape[0] - total_legend_height
+
+    # === Kotak latar RULA
+    cv2.rectangle(img, (legend_x - 5, legend_y_start - 5),
+                (legend_x + 230, legend_y_start + rula_block_height),
                 (30, 30, 30), -1)
 
-    # Kotak latar belakang REBA
-    cv2.rectangle(img, (legend_x - 5, legend_y_reba - 20),
-                (legend_x + 230, legend_y_reba + spacing * len(reba_labels)),
+    # === Kotak latar REBA
+    cv2.rectangle(img, (legend_x - 5, legend_y_start + rula_block_height + 5),
+                (legend_x + 230, legend_y_start + rula_block_height + 5 + reba_block_height),
                 (30, 30, 30), -1)
 
-    # Judul RULA
-    cv2.putText(img, "RULA", (legend_x, legend_y_rula - 8),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
-
-    # Judul REBA
-    cv2.putText(img, "REBA", (legend_x, legend_y_reba - 8),
+    # === Judul RULA
+    cv2.putText(img, "RULA", (legend_x, legend_y_start + 15),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
 
     # Entri RULA
     for i, (score, desc) in enumerate(rula_labels):
-        cy = legend_y_rula + i * spacing
+        cy = legend_y_start + 25 + i * spacing
         color = get_color_by_score(score)
         cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
         cv2.putText(img, desc, (legend_x + 2 * radius + 6, cy + 5),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (255, 255, 255), 1)
 
+    # === Judul REBA
+    reba_y_start = legend_y_start + rula_block_height + 20
+    cv2.putText(img, "REBA", (legend_x, reba_y_start),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+
     # Entri REBA
     for i, (score, desc) in enumerate(reba_labels):
-        cy = legend_y_reba + i * spacing
+        cy = reba_y_start + 10 + i * spacing
         color = get_color_by_score(score)
         cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
         cv2.putText(img, desc, (legend_x + 2 * radius + 6, cy + 5),
