@@ -60,6 +60,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     for key, index in point_mapping.items():
         try:
             x, y, conf = keypoints[0][index]
+            x += blank_space_width
             if conf > 0.1:
                 color = get_color_by_score(mapping[key])
 
