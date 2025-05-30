@@ -118,29 +118,57 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     cv2.putText(img, f"REBA: {reba_final}", (badge_x + 10, badge_y + 32),
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
 
-    # === LEGEND SKOR ===
+   # === LEGEND SKOR ===
     legend_x = 10
-    legend_y = img.shape[0] - 130
+    legend_y_rula = img.shape[0] - 160
+    legend_y_reba = legend_y_rula + 90  # bawahnya RULA
     spacing = 18
     radius = 6
 
-    score_labels = [
-        (1, "Baik"),
-        (2, "Cukup"),
-        (3, "Perlu Diperhatikan"),
-        (4, "Berisiko"),
-        (5, "Tinggi"),
-        (6, "Sangat Tinggi"),
-        (7, "Bahaya"),
+    rula_labels = [
+        (1, "1–2: Acceptable"),
+        (2, "3–4: Investigate"),
+        (3, "5–6: Change Soon"),
+        (4, "7: Implement Change"),
     ]
 
-    # Kotak latar belakang
-    cv2.rectangle(img, (legend_x - 5, legend_y - 10),
-              (legend_x + 160, legend_y + spacing * len(score_labels)),
-              (30, 30, 30), -1)
+    reba_labels = [
+        (1, "1: Negligible"),
+        (2, "2–3: Low"),
+        (3, "4–7: Medium"),
+        (4, "8–10: High"),
+        (5, "11+: Very High"),
+    ]
 
-    for i, (score, desc) in enumerate(score_labels):
-        cy = legend_y + i * spacing
+    # Kotak latar belakang RULA
+    cv2.rectangle(img, (legend_x - 5, legend_y_rula - 20),
+                (legend_x + 230, legend_y_rula + spacing * len(rula_labels)),
+                (30, 30, 30), -1)
+
+    # Kotak latar belakang REBA
+    cv2.rectangle(img, (legend_x - 5, legend_y_reba - 20),
+                (legend_x + 230, legend_y_reba + spacing * len(reba_labels)),
+                (30, 30, 30), -1)
+
+    # Judul RULA
+    cv2.putText(img, "RULA", (legend_x, legend_y_rula - 8),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+
+    # Judul REBA
+    cv2.putText(img, "REBA", (legend_x, legend_y_reba - 8),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+
+    # Entri RULA
+    for i, (score, desc) in enumerate(rula_labels):
+        cy = legend_y_rula + i * spacing
+        color = get_color_by_score(score)
+        cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
+        cv2.putText(img, desc, (legend_x + 2 * radius + 6, cy + 5),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.38, (255, 255, 255), 1)
+
+    # Entri REBA
+    for i, (score, desc) in enumerate(reba_labels):
+        cy = legend_y_reba + i * spacing
         color = get_color_by_score(score)
         cv2.circle(img, (legend_x + radius, cy), radius, color, -1)
         cv2.putText(img, desc, (legend_x + 2 * radius + 6, cy + 5),
