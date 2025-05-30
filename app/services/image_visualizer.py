@@ -124,7 +124,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 cv2.FONT_HERSHEY_SIMPLEX, font_scale, label_color(reba_label), font_thickness)
 
     # === LEGEND SKOR ===
-    legend_x = 10
+    legend_x = 15
     spacing = 20
     radius = 6
 
