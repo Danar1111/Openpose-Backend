@@ -75,6 +75,8 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
                 rula_score = mapping_rula[key]
                 reba_score = mapping_reba[key]
+                print("rula score:" + rula_score)
+                print("reba score:" + reba_score)
 
                 rula_color = get_color_by_score(rula_score)
                 reba_color = get_color_by_score(reba_score)
