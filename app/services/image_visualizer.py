@@ -72,7 +72,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
                 img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
                 sudut_val = hasil_prediksi.get("details", {}).get(key, None)
                 if sudut_val is not None:
-                    label = f"{sudut_val:.1f}d"
+                    label = f"{sudut_val:.0f}d"
 
                     # Ukuran teks
                     (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
@@ -129,24 +129,24 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
     radius = 6
 
     rula_labels = [
-        (1, "Acceptable"),
-        (2, "Acceptable"),
-        (3, "Investigate"),
-        (4, "Investigate"),
-        (5, "Change Soon"),
-        (6, "Change Soon"),
-        (7, "Implement Change"),
+        (1, "1: Acceptable"),
+        (2, "2: Acceptable"),
+        (3, "3: Investigate"),
+        (4, "4: Investigate"),
+        (5, "5: Change Soon"),
+        (6, "6: Change Soon"),
+        (7, "7: Implement Change"),
     ]
 
     reba_labels = [
-        (1, "Negligible"),
-        (2, "Low"),
-        (3, "Low"),
-        (4, "Medium"),
-        (5, "Medium"),
-        (6, "Medium"),
-        (7, "Medium"),
-        (8, "High"),
+        (1, "1: Negligible"),
+        (2, "2: Low"),
+        (3, "3: Low"),
+        (4, "4: Medium"),
+        (5, "5: Medium"),
+        (6, "6: Medium"),
+        (7, "7: Medium"),
+        (8, "8+: High"),
     ]
 
     # Hitung tinggi masing-masing blok legend
