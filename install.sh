@@ -95,4 +95,11 @@ git clone https://github.com/Danar1111/Openpose-Backend.git
 
 cd Openpose-Backend/
 
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+sudo npm install -g pm2
+
+# pm2 start run.py --interpreter python3 --name openpose-backend
+
 python3 run.py
