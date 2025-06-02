@@ -1,26 +1,51 @@
 sudo apt-get update -y && sudo apt-get install pip -y
 
-# install python3.9
+# --------------------------------------
+# INSTALL PYTHON 3.9 DENGAN SSL SUPPORT
+# --------------------------------------
+
+sudo apt-get update -y
+
+sudo apt-get install -y \
+    build-essential \
+    zlib1g-dev \
+    libncurses5-dev \
+    libgdbm-dev \
+    libnss3-dev \
+    libssl-dev \
+    libreadline-dev \
+    libffi-dev \
+    libsqlite3-dev \
+    wget \
+    libbz2-dev \
+    liblzma-dev \
+    uuid-dev \
+    tk-dev \
+    xz-utils \
+    make \
+    curl \
+    gcc
+
 cd /tmp
 wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tgz
 tar -xf Python-3.9.18.tgz
 cd Python-3.9.18
 
-./configure --enable-optimizations --with-ssl-default-suites=openssl --enable-loadable-sqlite-extensions
-
+./configure --enable-optimizations --with-ssl-default-suites=openssl
 make -j$(nproc)
-
 sudo make altinstall
 
-cd /
-rm -rf /tmp/Python-3.9.18*
+/usr/local/bin/python3.9 -m ensurepip
+/usr/local/bin/python3.9 -m pip install --upgrade pip
 
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.9 2
-
 echo "2" | sudo update-alternatives --config python3
 
 sudo ln -sf /usr/local/bin/pip3.9 /usr/bin/pip3
+
+cd /
+rm -rf /tmp/Python-3.9.18*
 
 cd ~
 # batas install python3.9
