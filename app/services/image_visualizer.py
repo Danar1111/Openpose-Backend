@@ -240,7 +240,7 @@ def generate_pose_visualization(image_bytes, keypoints, hasil_prediksi, is_flipp
 
     filename = datetime.now().strftime("%H%M%S_%f") + "_hasil.png"
     filepath = os.path.join(folder_path, filename)
-    link_image = "https://vps.danar.site/" + filepath
+    link_image = "https://vps.danar.site/model1/" + filepath
     cv2.imwrite(filepath, img)
 
     return link_image
